@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] Learning to Understand Traffic Signs | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="Learning to Understand Traffic Signs 논문 리뷰"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2021/learning-to-understand-traffic-signs/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] Learning to Understand Traffic Signs</h1> <p class="post-meta"> Created on December 15, 2021 </p> <p class="post-tags"> <a href="/blog/2021"> <i class="fa-solid fa-calendar fa-sm"></i> 2021 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/ocr"> <i class="fa-solid fa-hashtag fa-sm"></i> ocr</a>   <a href="/blog/tag/form-understanding"> <i class="fa-solid fa-hashtag fa-sm"></i> form_understanding</a>   <a href="/blog/tag/traffic-sign-understanding"> <i class="fa-solid fa-hashtag fa-sm"></i> traffic_sign_understanding</a>   <a href="/blog/tag/ctsu-dataset"> <i class="fa-solid fa-hashtag fa-sm"></i> CTSU_Dataset</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/computer-vision"> <i class="fa-solid fa-tag fa-sm"></i> Computer Vision</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://dl.acm.org/doi/abs/10.1145/3474085.3475362" rel="external nofollow noopener" target="_blank">Guo, Y., Feng, W., Yin, F., Xue, T., Mei, S., &amp; Liu, C. L. (2021, October). Learning to Understand Traffic Signs. In Proceedings of the 29th ACM International Conference on Multimedia (pp. 2076-2084).</a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. 올바르지 못한 내용에 대한 피드백을 환영합니다 :)</em></p> <hr> <h2 id="1-introduction">1. Introduction</h2> <ul> <li>최근 교통 표지판(traffic sign)에서 텍스트나 기호를 인식하는 task의 눈에 띄는 발전이 있었음</li> <li>각각의 요소를 따로 인지하는 것은 교통 표지판을 이해하는 첫 단계에 불과</li> <li>본 논문에서는 <strong>“traffic sign understanding”</strong>이라는 새로운 task를 소개 <ol> <li>교통 표지판에 포함된 요소들을 인식하고</li> <li>그 요소들 간의 관계를 파악하여</li> <li>“semantic description”(<code class="language-plaintext highlighter-rouge">&lt;key: value&gt;</code>의 형태)을 생성하는 것 <ul> <li> <code class="language-plaintext highlighter-rouge">key</code>: 표시 정보 (예: 현재 위치, 차선 번호, 전방 오른쪽 방향)</li> <li> <code class="language-plaintext highlighter-rouge">value</code>: 특정 내용 (예: 장소 이름, 도로 이름, 설명 단어)</li> <li>대부분의 교통 정보가 “indicative information + content”의 형태로 구성</li> </ul> </li> </ol> </li> <li>자율주행, positioning assistance, map correction과 같은 애플리케이션에 활용될 수 있음</li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146305612-774c9b44-c657-4a14-9619-a4571d99b90a.png" alt="img-description"></p> <p><strong>[@ Traffic sign understanding]</strong></p> <ul> <li>Traffic sign understaning은 크게 세 가지 subtask로 구성 <ul> <li>텍스트 및 기호의 위치와 semantic 정보를 추출하는 <strong>Component detection task</strong> </li> <li>텍스트와 기호의 인식 결과를 어떻게 조합할 것인지, 구성요소들 간의 관계를 모델링할 수 있는 <strong>Relation reasoning task</strong> <ul> <li>Graph Convolutional Network과 같은 관계 예측 모델을 사용</li> </ul> </li> <li>교통 표지판의 다양한 유형을 분류하는 <strong>Sign classification task</strong> <ul> <li>다양한 유형의 표지판에 따라같은 기호가 다른 의미를 나타낼 수 있음</li> <li>예) 차선 정보 표지판(그림 1(b))에서의 윗방향 화살표는 “직진”을 의미하고 안내 정보 표지판(그림 1(a))에서는 “전면”을 의미한다.</li> <li>교통 표지판의 유형을 예측함으로써 기호 간의 관계를 파악하는데에도 도움을 줄 수 있을 것</li> </ul> </li> </ul> </li> </ul> <p><strong>[@ CASIA-Tencent Chinese Traffic Sign Understanding Dataset (CTSU Dataset)]</strong></p> <ul> <li>복잡한 형태의 교통 표지판과 그 semantic description 레이블을 포함하는 첫 번째 데이터셋</li> <li>실제 dashcam 영상에서 잘라낸 5000개의 교통 표지판 이미지를 포함 <ul> <li>이미지 description, 기호, bounding box, 이미지 내의 텍스트, 기호의 카테고리</li> <li>요소들 간의 관계에 대한 레이블도 지정</li> </ul> </li> </ul> <p><strong>[@ Contributions]</strong></p> <ul> <li>교통 표지판 이미지 및 레이블 정보를 포함하는 데이터셋 CTSU 제안</li> <li>다양한 유형의 교통 표지판을 이해하고 description을 생성하기 위한 새로운 unified 모델 제안</li> <li>위 모델의 접근 방식이 traffic sign understanding에 효과적임을 실험을 통해 밝힘</li> </ul> <hr> <h2 id="2-related-work">2. Related Work</h2> <h3 id="21-traffic-sign-recognition">2.1. Traffic Sign Recognition</h3> <ul> <li>이전 교통 표지판에 관한 연구는 텍스트의 detection에 관한 연구가 주를 이룸 <ul> <li> <a href="https://iopscience.iop.org/article/10.1088/1757-899X/768/7/072039/meta" rel="external nofollow noopener" target="_blank">Peng et al.</a> proposed a two-stage cascade detection deep learning model, which used improved EAST for text line detection, and changed the size of feature maps to suit the text size of traffic signs.</li> <li> <a href="https://ieeexplore.ieee.org/abstract/document/9113429" rel="external nofollow noopener" target="_blank">Hou et al.</a> introduced an Attention Anchor Mechanism (AAM), which is used to weight the bounding boxes and anchor points to detect text in scene and traffic signs.</li> </ul> </li> <li>Traffic sign에 대한 공개 datasets는 주로 원형이나 삼각형 형태의 몇몇 간단한 형태의 분류에 대해서만 존재했음 <ul> <li>German Traffic Sign Recognition Benchmark - <a href="https://www.sciencedirect.com/science/article/pii/S0893608012000457" rel="external nofollow noopener" target="_blank">citation</a> </li> <li>DFG Traffic Sign Data Set - <a href="https://ieeexplore.ieee.org/abstract/document/8709983" rel="external nofollow noopener" target="_blank">citation</a> </li> <li>Chinese Traffic Sign Database (CTSD) - <a href="https://ieeexplore.ieee.org/abstract/document/7296660" rel="external nofollow noopener" target="_blank">citation</a> </li> <li>위 데이터셋들은 복잡한 교통 표지판 속 요소들 사이의 관계에 대한 정보가 없음</li> </ul> </li> </ul> <h3 id="22-scene-understanding">2.2. Scene Understanding</h3> <ul> <li>이미지를 기반으로 semantic description을 생성하는 task를 총칭하여 <strong>image caption</strong>이라 할 수 있음 <ul> <li>Recurrent Neural Network (RNN) 기반 <ul> <li>CNN만으로는 맥락 정보를 반영할 수 없음</li> <li> <a href="https://openaccess.thecvf.com/content_cvpr_2018/html/Zellers_Neural_Motifs_Scene_CVPR_2018_paper.html" rel="external nofollow noopener" target="_blank">Rowan et al.</a> first used LSTM to predict the object categories and then sent the object features and category information into LSTM for relationship prediction.</li> <li> <a href="https://openaccess.thecvf.com/content_iccv_2017/html/Li_Scene_Graph_Generation_ICCV_2017_paper.html" rel="external nofollow noopener" target="_blank">Li et al.</a> proposed a network that leveraged the feature of region, phrase, and object to generate scene graph and caption.</li> <li>위 연구들은 RNN이나 LSTM을 사용해 맥락 정보를 반영했음</li> <li>하지만, 공간적 정보(spatial information)을 반영하지 못함</li> </ul> </li> <li>Graph Neural Network (GNN) 기반 <ul> <li>더 나은 scene graph 구조를 생성하기 위해 GNN 기반의 모델들이 제안되었음</li> <li> <a href="https://openaccess.thecvf.com/content_ECCV_2018/html/Jianwei_Yang_Graph_R-CNN_for_ECCV_2018_paper.html" rel="external nofollow noopener" target="_blank">Yang et al.</a> proposed an attentional Graph Convolutional Network (aGCN) that uses contextual information to better reason about the relationship between objects</li> <li>이러한 방법들은 이미지 내의 맥락 정보(contextual information)를 포함할 수 있지만, 위치정보나 의미적 정보(semantic information)을 반영할 수 없음</li> </ul> </li> </ul> </li> </ul> <hr> <h2 id="3-ctsu-dataset">3. CTSU Dataset</h2> <p>– 중략 –</p> <h3 id="33-evaluation-metric">3.3. Evaluation Metric</h3> <ul> <li>Image caption에서 이용되던 척도들은 자연어 처리에서 비롯된 척도 <ul> <li>주로, 정답 값과 sequence matching의 형태이거나 유사도를 측정하는 형태</li> <li>교통 표지판의 semantic description은 문법적인 규칙을 신경쓰지 않아도 되는 형태이므로 비효율적임</li> </ul> </li> </ul> <p><strong>[@ Information Matching (IM)]</strong></p> <ol> <li>먼저 indicative information(<code class="language-plaintext highlighter-rouge">&lt;key: value&gt;</code>에서 <code class="language-plaintext highlighter-rouge">key</code>)에 대해 ground truth와 예측 값을 매칭 <ul> <li>각각 예측된 predicted description에 오직 하나의 ground truth description을 매칭할 수 있음</li> </ul> </li> <li>매칭 결과에 따라 각각 specific content(<code class="language-plaintext highlighter-rouge">&lt;key: value&gt;</code>에서 <code class="language-plaintext highlighter-rouge">value</code>)가 일치할 때 True Positive를 부여</li> <li>위 결과에 따라 각 이미지당 하나씩의 <code class="language-plaintext highlighter-rouge">recall</code>, <code class="language-plaintext highlighter-rouge">precision</code>, <code class="language-plaintext highlighter-rouge">F1-Measure</code>를 계산</li> </ol> <h3 id="34-statistics-and-analysis">3.4. Statistics and Analysis</h3> <ul> <li>CTSU Dataset contains 5,000 traffic signs <ul> <li>16,463 <code class="language-plaintext highlighter-rouge">&lt;key: value&gt;</code> descriptions</li> <li>31,536 relationship instances</li> <li>43,722 components, including 18,280 texts</li> </ul> </li> </ul> <p><strong>[@ Category Statistics]</strong></p> <ul> <li>교통 표지판 클래스 별로 복잡도(Complexity)를 계산하고 이를 해석함 <ul> <li>클래스 \(i\)에 대한 Complexity \(C(c_i)\)는 각 클래스 내 샘플들의 components 수(\(a_{c_i}\))와 각 샘플 내의 정보 엔트로피(information entropy; \(H(c_i)\))의 곱으로 정의</li> </ul> \[\begin{matrix} C(c_i) = a_{c_i}*H(c_i) = {1\over \lvert c_i \rvert} \sum_{p\in c_i} N_p * {1\over\lvert c_i \rvert} \sum_{p\in c_i} H_p\\ H_p = -P_{pa}\log P_{pa}-P_{pp}\log P_{pp}-P_{pn}\log P_{pn}\\ \\ \text{where } \lvert c_i \rvert \text{ is the total number of images of class } i\\ N_p \text{ is the total number of components in a particular sign } p\\ P_{pa}, P_{pp}, \text{and } P_{pn} \text{ are the frequency of association relation, pointing relation, }\\ \text{and no relation in the sign } p \end{matrix}\] </li> <li>CTSU 데이터셋은 샘플 수가 많은 클래스에서는 복잡도가 높고, 샘플 수가 비교적 적은 클래스에서는 복잡도가 낮음</li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146180434-5a099587-b94d-4041-9785-880d95ee90ba.png" alt="img-description" width="400" height="300"> <em>sign 클래스 당 복잡도 분석 결과</em></p> <p><strong>[@ Detection Imbalance]</strong></p> <ul> <li>교통 표지판 내의 구성요소들의 분포도 불균형 <ul> <li>‘text’ 요소는 수가 많고 다른 요소들은 비교적 수가 적음</li> <li>이를 잘 다룰 수 있어야 함</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146180908-282e9783-8892-4f20-994e-7a3ff361ed53.png" alt="image" width="400" height="300"></p> <p><strong>[@ Description Bias]</strong></p> <ul> <li>indicative information(<code class="language-plaintext highlighter-rouge">&lt;key: value&gt;</code>에서 <code class="language-plaintext highlighter-rouge">key</code>)을 담당하는 ‘text’ 요소는 20%를 미치지 못함 <ul> <li>‘text’ 요소가 전체 요소의 40%를 차지함에도 불구하고</li> <li>이 때문에 indicative information의 생성에 ‘text’의 “기여”가 과장될 것</li> <li>과장된 ‘text’의 영향을 줄일 수 있도록 모델링해야 함</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146181795-c25974cc-3004-4714-b4bf-e7056ee78a5c.png" alt="img-description" width="400" height="300"> <em>indicative information을 담당하는 요소들의 분포, ‘text’ 요소는 제외함, 가장 많은 수를 차지하는 ‘Crossroad’의 수도 ‘text’ 요소에 비하면 수가 적은 편</em></p> <hr> <h2 id="4-method">4. Method</h2> <p><img src="https://user-images.githubusercontent.com/67779236/146183272-592eb482-ca46-44f1-b43d-ab61f8ad576c.png" alt="img-description"> <em>논문에서 제안하는 모델의 전체 프레임워크</em></p> <h3 id="41-component-detection">4.1. Component Detection</h3> <ul> <li>교통 표지판의 요소들을 object detector를 통해 탐지해내는 과정</li> <li>single-stage anchor-freed object detection model인 FCOS를 사용 <ul> <li>물체의 중앙을 기준으로 bounding box를 예측하는 FCOS 알고리즘 특성상 두 물체가 겹쳐서 존재하면 잘 탐지하지 못하는 특성이 있음</li> <li>논문에서는 ‘texts’, ‘symbols’, ‘arrowheads’를 각각 따로따로 탐지하는 detection head를 두어 이를 해결했음</li> </ul> \[L_{DET} = L_{FCOS_T} + L_{FCOS_S} + L_{FCOS_A}\] \[\begin{matrix} \text{where } L_{FCOS_T}, L_{FCOS_S}, \text{ and } L_{FCOS_A} \text{ are the single head losses of}\\ \text{texts, symbols, and arrowheads} \end{matrix}\] </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146184817-62c0162d-0717-4e7a-9028-4176bfe2b47b.png" alt="img-description"> <em>두 요소가 겹쳐서 존재하는 경우</em></p> <h3 id="42-relation-reasoning">4.2. Relation Reasoning</h3> <ul> <li>그래프 구조 <ul> <li>구성요소(‘texts’, ‘symbols’, ‘arrowheads’)를 그래프의 <strong>node</strong> </li> <li>이 요소들의 관계를 그래프의 <strong>edge</strong> </li> <li>관계를 일부 node들에 대해서만 정의할 수 없음 <ul> <li>두 요소간 물리적 거리가 가깝다고 해서 꼭 관계를 형성하지는 않음</li> <li>따라서, 모든 node들이 연결된 그래프 구조로 초기화</li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146186194-4a99c729-bd02-408d-81d8-6adb77085847.png" alt="img-description"> <em>관계를 형성하고 있음에도 요소간 거리가 멀리 떨어진 경우가 많음: 때문에 논문에서는 fully connected graph 구조를 사용</em></p> <p><strong>[@ Feature generation]</strong></p> <p><img src="https://user-images.githubusercontent.com/67779236/146186905-d30b9b10-0516-4d9d-9809-87233d05657b.png" alt="img-description" width="500" height="300"></p> <ul> <li>node feature 및 edge feature를 생성하는 방법 <ol> <li> <strong>RoI feature</strong>: object detector가 만든 bounding box에 RoIAlign을 적용</li> <li> <strong>Position Mask</strong>: object detector가 만든 bounding box 위치에 masking한 이미지를 fully connected layer에 연결하여 feature 생성</li> <li> <strong>Semantic Encoding</strong>: object detector가 예측한 클래스 정보를 fully connected layer에 연결하여 feature 생성 (클래스 정보로는 edge를 표현할 수 없기 떄문에 edge에 대한 Semantic Encoding은 없다)</li> </ol> </li> <li>annotations <ul> <li>node feature: \(F_N = V_{ds} + V_{ps} + V_{ss}=\text{RoI feature} + \text{Position feature} + \text{Semantic feature} \in R^D\)</li> <li>edge feature: \(F_E = V_{du} + V_{pu}=\text{RoI feature} + \text{Position feature} \in R^D\) <ul> <li>\(D\)는 각 feature 차원 수</li> </ul> </li> <li>각 feature가 업데이트 되는 것을 \(\prime\)을 붙임으로써 표현</li> </ul> </li> </ul> <p><strong>[@ Graph Attention Network (GAT)]</strong></p> <ul> <li>GAT는 Graph Network에 Attention 메커니즘을 추가하여 node간 edge에 중요도를 부여하여 Graph 구조 정보를 모델링</li> <li>Attention coefficient <ul> <li><em>node \(N_i\)에 연관된 모든 node 및 edge에 대해 영향력이 있는 정도(중요도)를 계산</em></li> <li>edge \(E_{ji}\)는 node \(N_j\)에서 node \(N_i\)로의 관계를 의미</li> <li>\(f_A: R^{2D} \to R^D\): fully connected layer</li> <li>\(\parallel\): concatenation operation</li> </ul> </li> </ul> \[\alpha_{ji} = {\exp(\sigma(f_A(F_{E_{ji}} \parallel F_{N_i})))\over \sum_{k\in \mathbb N_i} \exp(\sigma(f_A(F_{E_{ki}} \parallel F_{N_i})))}\] <ul> <li>node feature의 업데이트 <ul> <li><em>edge feature에 Attention coefficient를 element-wise 곱을 하고 node feature를 concat하여 fully connected layer에 태움</em></li> <li>\(\otimes\): element-wise/hadamard product</li> <li>\(\sigma\): activation function, 논문에서는 <code class="language-plaintext highlighter-rouge">leaky ReLU</code>사용</li> <li>\(f_N: R^{2D} \to R^D\): fully connectec layer</li> </ul> </li> </ul> \[F^\prime_{N_i} = \sigma\left(f_N\left(\left(\sum_{j\in\mathbb N_i}\alpha_{ji} \otimes F_{E_{ji}}\right) \parallel F_{N_i}\right)\right)\] <ul> <li>edge feature의 업데이트 <ul> <li><em>두 노드 \(N_i\)와 \(N_j\)에 Attention coefficient를 element-wise 곱을 하고 더한 후 edge feature를 concat하여 fully connected layer에 태움</em></li> <li>\(f_E: R^{2D} \to R^D\): fullly connected layer</li> </ul> </li> </ul> \[F_{E_{ji}}^\prime = \sigma\left(f_E\left((\alpha_{ji}\otimes F_{N_j} + \alpha_{ji} \otimes F_{N_i}) \parallel F_{E_{ji}}\right)\right)\] <ul> <li>학습 과정에서는 ground truth bounding box를 통해 학습하여 GAT가 더 잘 수렴할 수 있게하였음</li> </ul> <h3 id="43-sign-classification">4.3. Sign Classification</h3> <ul> <li>교통 표지판의 관계를 파악하는데 교통 표지판의 유형을 분류하는 것이 도움이 될 수 있음</li> <li>backbone feature map 중 가장 작은 feature(\(FP_s\))와 GAT를 거친 node feature(\(F_{N}\))들을 더하여 교통 표지판 유형 예측에 사용</li> </ul> \[\begin{matrix} F_{FPN} = f_{FPN}(Conv(Resize(FP_s))),\\ F_{GAT} = \sum_i f_{GAT}(F_{N_i})),\\ f(F_{FPN}, F_{GAT}) = f_{CLS}(F_{FPN} + F_{GAT}) \end{matrix}\] <p><strong>[@ Loss Function]</strong></p> <ul> <li> <strong>section 4.1, 4.2, 4.3</strong>의 요소들의 loss를 선형 결합함</li> </ul> \[\begin{matrix} L=L_{DET} + \lambda_{REL}L_{REL} + \lambda_{CLS}L_{CLS}\\ \text{where } \lambda_{REL} \text{ and } \lambda_{CLS} \text{ are set to 1.0 for training.} \end{matrix}\] <h3 id="44-semantic-description">4.4. Semantic Description</h3> <ul> <li>Inference objects <ul> <li>detected box를 필터링하는 threshold = \(0.2\)</li> <li>relationship을 필터링하는 relationship threshold = \(0.5\)</li> <li>text box에 대해서는 사전학습된 OCR모델로 텍스트를 추출함</li> </ul> </li> <li> <strong>heuristic method</strong> to generate semantic descriptions <ol> <li>relation 예측 결과를 통해 relation trees를 구성</li> <li>symbol에 따라 의미 태그 부여 <ul> <li>교통 표지판 유형에 따라 symbol에 의미를 부여</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">&lt;key: value&gt;</code> structure 구성 <ul> <li>대부분 <code class="language-plaintext highlighter-rouge">value</code>의 위치에 명확한 요소들이 위치함 (예. 지명, 지하철역명 등등)</li> <li>교통 표지판 유형에 따라 <code class="language-plaintext highlighter-rouge">key</code>의 위치에 명확한 요소들이 위치하는 경우도 있음 (예. lane information sign에서는 차선 번호(lane 1, lane 2, …)가 <code class="language-plaintext highlighter-rouge">key</code>에 위치함)</li> <li>따라서, 해당 작업도 교통 표지판 유형에 따라 부여</li> </ul> </li> </ol> </li> </ul> <hr> <h2 id="5-experiments">5. Experiments</h2> <ul> <li>CTSU 데이터셋에 대해 실험 수행 <blockquote> <p>학습과 검증 데이터셋에 대한 설명이 없는 것으로 봐서 아래 실험 결과는 모두 학습 데이터에 대한 실험 결과인 것으로 보인다.</p> </blockquote> </li> </ul> <h3 id="51-implementation-details">5.1. Implementation Details</h3> <ul> <li>backbone: ImageNet에 사전학습한 ResNet-50, Deformable Convolutional Network (DCN) 테크닉 사용</li> <li>GAT의 레이어 수는 5개</li> <li>50 epochs</li> <li>learning rate 0.01 <ul> <li>epoch 35, 45에 각각 0.1씩 감소</li> </ul> </li> <li>batch size 8 on 2 GPUs</li> </ul> <h3 id="52-ablation-studies">5.2. Ablation Studies</h3> <p><img src="https://user-images.githubusercontent.com/67779236/146296164-0661b573-85e0-4b9a-af00-4c4e0ecdaa2f.png" alt="image"></p> <p><strong>[@ Multi-head Detection]</strong></p> <ul> <li>FCOS 특성 상 겹쳐있는 물체를 포착하지 못하는 문제를 밝힘 <ul> <li>약 1%정도의 성능 향상</li> </ul> </li> <li>Faster R-CNN도 겹쳐있는 물체에 대한 해결책이 될 수 있음 <ul> <li>사전 정의된 anchor 세팅이 성능에 제한이 되었음</li> <li>약 0.7% 정도의 성능 차이</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/146296527-a11d3a54-0a9e-444e-81fd-b0cbed784c4c.png" alt="img-description" width="400" height="400"> <em>기존 FCOS(a)와 논문에서 제안하는 Multi-head detection 모델(b)과의 차이</em></p> <p><strong>[@ Semantic Encoding]</strong></p> <p><img src="https://user-images.githubusercontent.com/67779236/146296527-a11d3a54-0a9e-444e-81fd-b0cbed784c4c.png" alt="img-description" width="400" height="400"> <em>semantic feature를 제외했을 때, arrowhead가 아닌 symbol에 relation이 할당됨(c)</em></p> <h3 id="53-comparison-with-the-state-of-the-art">5.3. Comparison with the state-of-the-art</h3> <p><img src="https://user-images.githubusercontent.com/67779236/146297804-11154732-2ab9-45c5-8800-41d8dff27db1.png" alt="image"></p> <hr> <p><img src="https://user-images.githubusercontent.com/67779236/146298455-34ca91fb-1c3e-4468-ad19-eedeae45476e.png" alt="image"></p> <hr> <h2 id="6-conclusion">6. Conclusion</h2> <ul> <li>intelligent transportation을 위한 traffic sign understanding이라는 task를 새롭게 제안</li> <li>bounding boxes, relations, semantic description 레이블을 할당한 CTSU Dataset 제안</li> <li>Component detection, relation reasoning, sign classification, semantic description generation의 multi-task 학습 프레임워크를 제안</li> </ul> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

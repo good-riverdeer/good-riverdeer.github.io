@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] Donut: Document Understanding Transformer without OCR | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2021/donut/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] Donut: Document Understanding Transformer without OCR</h1> <p class="post-meta"> Created on December 27, 2021 </p> <p class="post-tags"> <a href="/blog/2021"> <i class="fa-solid fa-calendar fa-sm"></i> 2021 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/document-understanding"> <i class="fa-solid fa-hashtag fa-sm"></i> document_understanding</a>   <a href="/blog/tag/multimodal"> <i class="fa-solid fa-hashtag fa-sm"></i> multimodal</a>   <a href="/blog/tag/transformer"> <i class="fa-solid fa-hashtag fa-sm"></i> transformer</a>   <a href="/blog/tag/gru"> <i class="fa-solid fa-hashtag fa-sm"></i> GRU</a>   <a href="/blog/tag/swin-transformer"> <i class="fa-solid fa-hashtag fa-sm"></i> swin_transformer</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/computer-vision"> <i class="fa-solid fa-tag fa-sm"></i> Computer Vision</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://arxiv.org/abs/2111.15664" rel="external nofollow noopener" target="_blank">Kim, G., Hong, T., Yim, M., Park, J., Yim, J., Hwang, W., … &amp; Park, S. (2021). Donut: Document Understanding Transformer without OCR. <em>arXiv preprint arXiv:2111.15664.</em></a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. 올바르지 못한 내용에 대한 피드백을 환영합니다 :)</em></p> <hr> <h2 id="1-introduction">1. Introduction</h2> <ul> <li>Visual Document Understanding (VDU) <ul> <li>스캔된 형태 혹은 사진으로 촬영한 형태의 전자 파일 형태의 문서에 대한 이해</li> <li>문서 처리 자동화를 위해 필요한 중요한 단계임 <ul> <li>document classification, parsing, visual question answering 등등</li> </ul> </li> </ul> </li> <li>Optical Character Recognition (OCR) 시스템 <ul> <li>딥러닝을 활용한 OCR 시스템이 발전함에 따라 Document understanding을 위한 기존 연구들은 독립적인 OCR 모듈을 사용해 텍스트를 추출</li> <li>해당 연구들의 문제점 <ol> <li> <strong>OCR은 유지비용이 많이 든다</strong>: 최근의 OCR 모델들은 GPU를 사용하기도 하며 큰 규모의 학습 데이터셋이 필요함</li> <li> <strong>OCR이 발생시키는 error는 후속 프로세스에 부정적인 영향을 미친다</strong>: 한국어나 일본어와 같이 비교적 OCR이 어려운 언어에 대해 빈번하게 발생함</li> </ol> </li> </ul> </li> <li>Donut: <strong>Do</strong>cume<strong>n</strong>t <strong>u</strong>nderstanding <strong>t</strong>ransformer <ul> <li>raw 입력 이미지만으로 원하는 형태의 출력으로 매핑할 수 있도록 모델링</li> <li>end-to-end로 학습하며, 다른 모듈(OCR은 물론)에 의존적이지 않음</li> </ul> </li> <li>SynthDoG: <strong>Synth</strong>etic <strong>Do</strong>cument <strong>G</strong>enerator <ul> <li>합성 문서 이미지 생성기</li> <li>모델 사전학습에 꼭 필요한 대규모 문서 이미지를 생성할 수 있음</li> <li>대규모 실제 문서 이미지에 대한 의존성을 완화</li> </ul> </li> </ul> <p><strong>[@ Contributions]</strong></p> <ul> <li>Visual Document Understanding을 위한 새로운 방법론 제시 <ul> <li>최초로 OCR-free한 transformer 아키텍처에 기초한 방법을 제안</li> <li>end-to-end로 학습 가능</li> </ul> </li> <li>SynthDoG제안 &amp; 모델의 사전학습을 위한 간단한 사전학습 task 제시</li> <li>광범위한 실험 설계 <ul> <li>공공 벤치마크 뿐만 아니라 저자들의 산업 서비스에서 수집한 데이터셋에 대해서도 분석</li> <li>논문에서 제시하는 방법론이 뛰어남을 보임</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="2-method">2. Method</h2> <h3 id="21-preliminary-background">2.1. Preliminary: background</h3> <ul> <li>기존 VDU는 BERT의 출현과 함께 Computer Vision(CV)과 Natural Language Processing(NLP)를 결합한 transformer 형태의 방법들이 제안되어 왔음</li> <li>일부 문제점 <ol> <li>대규모의 실제 문서 이미지 데이터셋을 사용해야함</li> <li>독립적인 OCR 엔진에 의존하여 텍스트를 추출해야함 <em>(VDU 모델의 전체 성능을 유지하려면 OCR 엔진을 유지보수 해야하는 추가적인 노력이 필요함)</em> </li> </ol> </li> </ul> <h3 id="22-document-understanding-transformer">2.2. Document Understanding Transformer</h3> <p><img src="https://user-images.githubusercontent.com/67779236/147434575-288d1ba5-db7a-4cba-9213-53966de916a4.png" alt="img-description"></p> <ul> <li> <strong>Encoder</strong> <ul> <li>visual encoder: \(\mathbf x \in \mathbb R^{H\times W\times C} \to \left( \mathbf z_i \mid \mathbf z_i \in \mathbb R^d, 1\le i \le n \right)\) <ul> <li>\(n\)은 feature map size 혹은 이미지 패치 수</li> <li>\(d\)는 transformer의 입력 벡터 차원 수</li> </ul> </li> <li>본 연구에서는 Swin Transformer를 사용</li> </ul> </li> <li> <strong>Decoder</strong> <ul> <li>textual decoder: \(\{\mathbf z\} \to (\mathbf y_i)^m_1\) <ul> <li>\(\mathbf y_i \in \mathbb R^v\): one-hot vector for the token \(i\)</li> <li>\(v\): the size of token vocabulary</li> <li>\(m\): a hyperparameter</li> </ul> </li> <li>multilingual BART의 첫 4개의 레이어 사용</li> </ul> </li> <li> <strong>Model Input</strong> <ul> <li>Training phase <ul> <li>teacher-forcing 방식으로 학습 진행</li> </ul> </li> <li>Test phase <ul> <li>GPT-3와 같이 토큰 시퀀스 생성</li> <li>각각의 downstream task에 맞게 약간의 special token으로 <strong>prompt</strong>를 제공하여 출력할 수 있도록 함 <ul> <li> <strong>prompt?</strong>: GPT-3는 약간의 예시를 제공받고 이에 파생되는 결과물을 예측하는데, 이 때 GPT-3가 제공받는 제한된 소스 및 샘플 혹은 예시를 prompt라고 함</li> </ul> </li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147440169-9ae84bcd-79fb-44f7-9322-9d0abffa8f0c.png" alt="img-description"> <em>input prompt의 예시</em></p> <ul> <li> <strong>Output Conversion</strong> <ul> <li>downstream task의 종류와 관계없이 최종 결과물로 <strong>JSON</strong> 파일 형태로 변환하였음</li> <li> <code class="language-plaintext highlighter-rouge">[START_*]</code>, <code class="language-plaintext highlighter-rouge">[END_*]</code> 토큰을 활용해 파싱 <ul> <li>ex.) <code class="language-plaintext highlighter-rouge">[START_class]</code>,<code class="language-plaintext highlighter-rouge">[receipt]</code>,<code class="language-plaintext highlighter-rouge">[END_class]</code> \(\to\) <code class="language-plaintext highlighter-rouge">{"class": "receipt"}</code> </li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">[START_name]</code> 토큰만 출현하고, <code class="language-plaintext highlighter-rouge">[END_name]</code> 토큰은 출현하지 않았을 경우 \(\to\) <code class="language-plaintext highlighter-rouge">"name"</code> 필드 요소는 출현하지 않은 것으로 처리하였음</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147440364-b65cafc5-0c52-4146-8654-48ee37b8abca.png" alt="img-description"> <em>모델이 예측한 token sequence에서 JSON 파일로 변환하는 예시</em></p> <h3 id="23-pre-training">2.3. Pre-training</h3> <ul> <li> <strong>Synthetic Document Generator (SynthDoG)</strong> <ul> <li>이미지 렌더링 파이프라인은 <strong>SynthTIGER (Synthetic Text Image GEneratoR)</strong>의 것을 따름</li> <li>Background <ul> <li>ImageNet의 이미지를 샘플링하여 배경으로 사용</li> </ul> </li> <li>texture of Document <ul> <li>문서의 종이 질감은 수집된 사진에서 샘플링함</li> </ul> </li> <li>Text <ul> <li>단어나 문장들은 Wikipedia에서 수집</li> </ul> </li> <li>Layout <ul> <li>rule based 랜덤 패턴으로 실제 문서의 레이아웃을 따라하고자 했음</li> </ul> </li> </ul> </li> <li> <strong>Task</strong> <ul> <li>SynthDoG가 렌더링한 1.2M개의 합성 문서 이미지로 학습</li> <li>영어, 일본어, 한국어가 이미지 생성에 사용되었으며 각 언어당 400K개의 이미지를 생성</li> <li>사전학습 task로는 단순히 이미지 내의 문자를 top-left \(\to\) bottom-right 방향으로 텍스트를 잘 읽어내는 task를 수행</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147440756-9ac41163-c6e9-4eb1-be11-6556bff503cc.png" alt="img-description"> <em>SynthDoG로 렌더링한 이미지 예시</em></p> <h3 id="24-applications">2.4. Applications</h3> <ul> <li>사전학습 단계에서 <em>how to read</em>를 학습했다면 미세 조정 단계에서는 <em>how to understand</em>를 학습</li> <li>섹션 <strong>2.2. Output Conversion</strong>의 형태, JSON 파일 형태를 생성할 수 있도록 미세 조정</li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="3-experiments-and-analysis">3. Experiments and Analysis</h2> <h3 id="31-downstream-tasks-and-datasets">3.1. Downstream tasks and Datasets</h3> <p>예측 단계에서도 모든 downstream task에 대해 JSON 파일에 나타난 정보를 읽어들이는 형식으로 진행한다.</p> <p><img src="https://user-images.githubusercontent.com/67779236/147441365-5a27dc83-2e6c-4892-8645-fecc42b54c8f.png" alt="img-description"></p> <h3 id="311-document-classification">3.1.1. Document Classification</h3> <ul> <li>RVL-CDIP dataset <ul> <li>320,000 train / 40,000 validation / 40,000 test</li> <li>grayscale images</li> <li>16 classes</li> </ul> </li> <li>classification <ul> <li>타 연구에서는 token 임베딩에 softmax를 씌워 class label을 예측</li> <li>본 연구에서는 JSON 파일에서 class label 정보를 읽어들이는 방식으로 예측</li> </ul> </li> </ul> <h3 id="312-document-parsing">3.1.2. Document Parsing</h3> <ul> <li>문서 내 layouts, formats, contents를 예측하는 task</li> <li>Indonesian Receipts dataset <ul> <li>1K Indonesian receipt images <ul> <li>OCR annotations 포함</li> </ul> </li> </ul> </li> <li>Japanese Business Cards dataset (In-Service Data) <ul> <li>20K 일본 명함 이미지</li> <li>JSON 형태로 구조 정보 포함</li> </ul> </li> <li>Korean Receipts dataset (In-Service Data) <ul> <li>55K 한국 영수증 이미지</li> <li>JSON 형태로 구조 정보 포함</li> <li>타 데이터셋보다 복잡한 형태를 갖춤</li> </ul> </li> </ul> <h3 id="313-document-vqa">3.1.3. Document VQA</h3> <ul> <li>문서 이미지와 주어진 질문을 입력 받아 올바른 답변을 출력해야하는 task</li> <li>DocVQA dataset <ul> <li>12K document images 내 50K questions 포함</li> <li>training: validation: test = 39,463: 5,349: 5,188 images</li> </ul> </li> <li>test set에 대한 ANLS (Average Normalized Levenshtein Similarity) 수치 제시</li> </ul> <p><br><br></p> <h3 id="32-common-settings">3.2. Common Settings</h3> <ul> <li> <strong>pre-train</strong> on the <strong>1.2M</strong> synthetic document images for <strong>an epoch</strong> </li> <li>mini-batch size: 8</li> <li>Adam optimizer</li> <li>initial learning rate is selected from \(2e-5\) to \(8e-5\) <ul> <li>learning rate is scheduled</li> <li>스케줄링 방법은 제시하지 않았음</li> </ul> </li> <li>OCR 의존적인 타 모델에 대한 OCR 세팅 <ul> <li>OCR 레이블이 지정되어 있는 데이터셋의 경우 특별한 언급이 없을 때 정답 레이블을 이용</li> <li>몇몇 task에 대해서는 Microsoft OCR API 사용</li> <li>document parsing task에서는 CLOVA OCR 중 영수증 및 명함 이미지에 적합한 모델을 적용</li> </ul> </li> </ul> <p><br><br></p> <h3 id="33-results">3.3. Results</h3> <h3 id="331-document-classification">3.3.1. Document Classification</h3> <p><img src="https://user-images.githubusercontent.com/67779236/147443199-e2db7608-66a3-4898-9507-6a9f68a20e6e.png" alt="img-description"></p> <h3 id="332-document-parsing">3.3.2. Document Parsing</h3> <p><img src="https://user-images.githubusercontent.com/67779236/147443360-9182a926-a05b-462c-b042-764e37657794.png" alt="img-decription"></p> <h3 id="333-document-vqa">3.3.3. Document VQA</h3> <p><img src="https://user-images.githubusercontent.com/67779236/147444007-f63776cc-ff48-4958-868a-83f7e88a7bbc.png" alt="image"></p> <ul> <li>그룹 구분 <ul> <li>첫 번째 그룹: 데이터셋에서 제공하는 OCR 레이블 사용</li> <li>두 번째 그룹: CLOVA OCR 사용</li> <li>세 번째 그룹: Microsoft OCR API 사용</li> </ul> </li> <li>성능 <ul> <li>성능이 만족스럽지 못하지만 추론 시간 면에서 앞섬</li> </ul> </li> <li>실제 문서 이미지를 사용한 사전학습 <ul> <li>마지막으로 10K개의 실제 문서 이미지로 Donut 모델을 사전학습하였을 때, 성능 향상 폭이 매우 컷음</li> <li>실제 문서 이미지로 학습하는 것이 중요함</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="5-concluding-remarks">5. Concluding Remarks</h2> <ul> <li>Donut <ul> <li>새로운 형태의 visual document understanding에 대한 end-to-end 방법론</li> <li>입력 이미지를 곧바로 구조화된 JSON 파일로 매핑</li> <li>다른 OCR 엔진이나 큰 규모의 실제 문서 이미지에 의존적이지 않음</li> </ul> </li> <li>SynthDoG <ul> <li>사전학습 데이터를 만들 수 있는 합성 문서 생성기 제안</li> </ul> </li> <li>실험 결과 <ul> <li>논문에서 제안하는 방법이 <em>cost effective</em>함을 보임</li> </ul> </li> <li>future work <ul> <li>document understanding과 관련한 다른 도메인이나 task로 확장</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <p>Naver CLOVA AI 팀의 문서 이미지를 다루는 태도를 알 수 있었다.</p> <p>pre-training task가 단순 텍스트 리딩에 그친 것을 마주하고 다소 실망한 감이 있었지만, 확실히 OCR의 도움을 벗어내려는 접근과 output의 형태를 JSON으로 통일하려는 접근 자체는 매우 재미있었다.</p> <p>pre-training task가 단순한 이유 때문인지 Document VQA에 대한 성능은 많이 떨어지는 듯 <em>(애초에 네이버에서 서비스하고 있는 국내 영수증이나 일본 명함에 specific하게 접근한 것으로 보인다)</em>. 사실 타 연구들은 텍스트 정보까지 활용하는 multi-modal 모델인 만큼 이에 파생되는 많은 pre-training task를 적용할 수 있겠지만, 이미지만 사용하는 Donut의 경우에는 그 종류가 제한적이라는 면에서 이해는 된다.</p> <p>빨리 github에서 공개된 코드를 마주할 날이 오길 바란다.</p> <p><br></p> <hr> <p><br></p> <h2 id="4-related-work">4. Related Work</h2> <h3 id="41-optical-character-recognition">4.1. Optical Character Recognition</h3> <ul> <li>초기 text detection method <ul> <li>CNN으로 local segments를 잡고, 휴리스틱한 방식으로 segment들을 결합하여 최종 detection line으로 만드는 형태를 취함</li> </ul> </li> <li>이후에 object detection을 적극적으로 사용 <ul> <li>region proposal, bounding box regression 개념 적용, 텍스트 탐지</li> </ul> </li> <li>최근 <ul> <li>텍스트 고유의 동질성, 지역성에 집중</li> <li>텍스트 내부의 구성요소, 즉 sub-text(혹은 알파벳)를 탐지하고 하나의 텍스트 인스턴스로 결합하는 형태</li> <li>curved, long, oriented 텍스트에 대응할 수 있었음</li> </ul> </li> <li>Text recognition <ul> <li>위에서 탐지한 영역을 잘라내 CNN으로 인코딩-디코딩하여 문자를 해석</li> </ul> </li> </ul> <h3 id="42-visual-document-understanding">4.2. Visual Document Understanding</h3> <ul> <li>Classification <ul> <li>초기에는 일반적인 이미지처럼 문서 이미지도 처리 (CNN의 활용)</li> <li>BERT의 출현 이후 CV and NLP 조합이 트렌드로 자리잡음 <ul> <li>여기에는 OCR 엔진을 통한 텍스트 추출이 필수적</li> <li>OCR로 추출한 텍스트를 token sequence의 형태로 하여 BERT의 입력으로 제공 (가능하다면 visual feature도 사용)</li> <li>아이디어는 간단하지만 훌륭한 성능을 보였음</li> </ul> </li> </ul> </li> <li>Document parsing <ul> <li>초기 <ul> <li>구조화된 형식의 문서에 대한 알맞은 database scheme에 따라 사람이 parsing하는 형태</li> </ul> </li> <li>최근 <ul> <li>OCR을 통한 parsing이 활용되고 있음</li> </ul> </li> </ul> </li> <li>Visual Question Answering <ul> <li>대부분의 SOTA 방법론은 BERT류의 transformer 구조를 띄고 있음 <ul> <li>주어진 이미지에 질문에 대한 답이 나타나지 않을 경우가 있음</li> <li>위 우려점에 대응하기 위한 생성 기반의 방법도 제안한 연구가 있음</li> </ul> </li> </ul> </li> </ul> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

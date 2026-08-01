@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network. | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2022/tebner/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.</h1> <p class="post-meta"> Created on January 17, 2022 </p> <p class="post-tags"> <a href="/blog/2022"> <i class="fa-solid fa-calendar fa-sm"></i> 2022 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/named-entity-recognition"> <i class="fa-solid fa-hashtag fa-sm"></i> Named_Entity_Recognition</a>   <a href="/blog/tag/ner"> <i class="fa-solid fa-hashtag fa-sm"></i> NER</a>   <a href="/blog/tag/bert"> <i class="fa-solid fa-hashtag fa-sm"></i> BERT</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/natural-language-processing"> <i class="fa-solid fa-tag fa-sm"></i> Natural Language Processing</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://aclanthology.org/2021.emnlp-main.18/" rel="external nofollow noopener" target="_blank">Fang, Z., Cao, Y., Li, T., Jia, R., Fang, F., Shang, Y., &amp; Lu, Y. (2021, November). TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network. In <em>Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</em> (pp. 198-207).</a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. :)</em></p> <p><br></p> <hr> <p><br></p> <h2 id="1-introduction">1. Introduction</h2> <ul> <li>현존하는 대부분의 NER 방법들은 많은 양의 labeled data가 필요함 <ul> <li>특정 도메인의 전문가가 직접 레이블링을 해야하는 경우, 사람의 노력이 많이 필요하며 시간도 많이 소요</li> </ul> </li> <li>distant supervision: 자동적인 레이블링 할당 방법들이 제안되어 왔음 <ul> <li>특정 도메인에 대한 <code class="language-plaintext highlighter-rouge">raw corpus</code> 혹은 <code class="language-plaintext highlighter-rouge">dictionary</code>를 사용</li> <li>정확한 문자열 매칭(string matching)으로 레이블을 할당</li> <li>위 방법으로 진행할 경우, 아래 두 가지 문제점이 존재할 수 있음</li> </ul> </li> </ul> <ol> <li> <strong><em>Incomplete annotations</em></strong> <ul> <li>original dictionary에 entity가 모두 포함되지 않을 수 있음: <em>out-of-dictionary</em> <ul> <li>기존 데이터셋에 <code class="language-plaintext highlighter-rouge">dictionary</code>가 전체 domain entity에 50% 정도만 포함하고 있음을 확인</li> </ul> </li> <li>일부 선행 연구에서는 heuristic rule로 <code class="language-plaintext highlighter-rouge">dictionary</code>를 확장 <ul> <li>다른 도메인에 일반적으로 적용될 수 없음</li> </ul> </li> </ul> </li> <li> <strong><em>the difficulty of recalling new entities</em></strong> <ul> <li>supervised model을 통해 NER을 수행했던 선행 연구에서도 모델의 한계로 인해 새로운 entity를 찾아내는 것이 어려웠음</li> <li>선행 연구에서는 <code class="language-plaintext highlighter-rouge">sequence label model</code>이나 <code class="language-plaintext highlighter-rouge">boundary detection model</code>과 같은 방식으로 사용, <strong>맥락적 정보(context information)</strong>만을 활용했음 <ul> <li> <code class="language-plaintext highlighter-rouge">sequence label model</code>: 문장의 단어마다 레이블을 예측하는 모델링</li> <li> <code class="language-plaintext highlighter-rouge">boundary detection model</code>: 문장의 특정 구간이 entity임을 예측하는 모델링</li> </ul> </li> <li>특정 도메인 corpus에 대한 <strong>전역적인 통계적 특징(global statistical features)</strong>은 선행 연구에서 배제되었음</li> </ul> </li> </ol> <ul> <li> <strong>TEBNER</strong>: Type Expanded Boundary-aware NER) <ul> <li> <strong><em>dictionary expansion</em></strong> <ul> <li>raw corpus에서 높은 퀄리티의 어구(phrase)을 추출, 잠재적인 entity로 간주</li> <li>수집된 어구에 <em>entity typing model(with context information)</em>로 분류 및 필터링</li> <li>필터링된 어구들을 <code class="language-plaintext highlighter-rouge">dictionary</code>에 추가</li> <li> <strong><em>Incomplete annotations</em></strong> 문제 완화</li> </ul> </li> <li> <strong><em>multi-granularity boundary labeling strategy</em></strong> <ul> <li>서로 다른 관점에서 문장 시퀀스를 태깅하고 이를 통해 명확한 entity boundary(문장 내 어느 범위가 entity인지)를 찾아냄</li> <li>token interaction tagger: entity token 간의 내부적 연결성 관점</li> <li>sequence labeling: 문장 내 명확한 entity 범위 관점</li> <li>global statistical features: 특정 domain corpus의 전역적 관점</li> </ul> </li> </ul> </li> </ul> <h3 id="contributions">Contributions</h3> <ul> <li>애매한 방식이나 heuristic rule 등에 의존하지 않고 semantic context를 통한 새로운 <strong><em>dictionary extension method</em></strong>를 제안</li> <li>word, sentence, corpus level의 정보들을 통합(fusing)하여 entity boundary를 특정할 수 있는 <strong><em>Multi-granularity boundary-aware network</em></strong> 제안</li> <li>세 가지 벤치마크 데이터셋에 대한 폭넓은 실험 설계 및 결과 제시</li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="2-related-work">2. Related Work</h2> <h3 id="supervised-models">Supervised Models</h3> <ul> <li>최근 일부 연구에서는 각 entity의 범위(boundary)만을 찾아내는 연구가 일부 있음 <ul> <li> <a href="https://arxiv.org/abs/1810.01808" rel="external nofollow noopener" target="_blank">Wang et al., 2018</a>; <a href="https://aclanthology.org/D19-1034.pdf" rel="external nofollow noopener" target="_blank">Zhang et al., 2019</a>; <a href="https://arxiv.org/abs/1910.11476" rel="external nofollow noopener" target="_blank">Li et al., 2020b</a> </li> </ul> </li> <li>사전학습 모델의 등장에 따라 ELMo(<a href="https://arxiv.org/abs/1802.05365" rel="external nofollow noopener" target="_blank">Peters et al., 2018</a>)나 BERT(<a href="https://arxiv.org/abs/1810.04805" rel="external nofollow noopener" target="_blank">Devlin et al.,2019</a>)를 사용하여 NER 태스크를 수행</li> <li>많은 양의 labeled data가 필요함</li> </ul> <h3 id="distant-supervision-methods">Distant supervision methods</h3> <ul> <li>AutoNER; <a href="https://arxiv.org/abs/1809.03599" rel="external nofollow noopener" target="_blank">Shang et al., 2018b</a> <ul> <li> <strong><em>out-of-dictionary</em></strong> 어구들을 <strong><em>unknown</em></strong> type으로 매칭</li> <li>잠재적인 entity 후보로 선정</li> </ul> </li> <li>HAMNER; <a href="https://ojs.aaai.org/index.php/AAAI/article/view/6358" rel="external nofollow noopener" target="_blank">Liu et al., 2020</a> <ul> <li> <code class="language-plaintext highlighter-rouge">entity boundary</code>를 예측하는 entity classification model을 도입</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="3-problem-definition">3. Problem Definition</h2> <ul> <li>Named Entity Recognition <ul> <li>주어진 단어 시퀀스 \(X = [x_1, x_2, ..., x_n]\)에서</li> <li>\(t\) 타입의 entity 범위 \(e_t = \left[x_i, ..., x_j\right] (0 \le i \le j \le n)\)를 찾아냄</li> </ul> </li> <li>Distant Supervision NER <ul> <li> <code class="language-plaintext highlighter-rouge">dictionary</code> \(D\)를 입력으로 제공</li> <li> <code class="language-plaintext highlighter-rouge">dictionary</code>는 이름(surface name)과 entity type을 적어놓음</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="4-the-proposed-method">4. The Proposed Method</h2> <ul> <li>두 가지 요소로 구성</li> <li>Dictionary Extender <ul> <li>NER 레이블을 생성</li> <li>target domain에 대해서 많은 어구(phrase)를 생성함</li> </ul> </li> <li>Entity Recognizer <ul> <li> <code class="language-plaintext highlighter-rouge">entity boundary</code>와 <code class="language-plaintext highlighter-rouge">entity type</code>을 예측</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149704739-c8bb0e16-c055-4dd0-a92e-119623569166.png" alt="image-description" width="500"></p> <p><br><br></p> <h3 id="41-dictionary-extender">4.1. Dictionary Extender</h3> <ul> <li> <strong><em>High-quality phrase extraction</em></strong> <ul> <li>선행 연구에서 처럼 AutoPhrase(<a href="https://ieeexplore.ieee.org/abstract/document/8306825" rel="external nofollow noopener" target="_blank">Shang et al., 2018a</a>)를 통한 어구 생성</li> <li> <strong>AutoPhrase</strong> <ul> <li>distantly supervised phrase mining tool</li> <li>빈도 수에 따라 후보 어구를 만들고 검증하며 어구를 생성하는 툴</li> </ul> </li> <li>Threshold <ul> <li>좋은 퀄리티의 entity만을 확보하기 위한 임계값, AutoPhrase의 신뢰도 점수 기반</li> <li>single word phrase: 0.9</li> <li>multi-word phrase: 0.5</li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149705316-4c449c9c-3caa-42e4-9fc0-ec21735a4e84.png" alt="image-description"> <em>AutoPhrase의 아키텍처, <a href="https://ieeexplore.ieee.org/abstract/document/8306825" rel="external nofollow noopener" target="_blank">Shang et al., 2018a</a></em></p> <ul> <li> <strong><em>Entity classification</em></strong> <ul> <li>AutoPhrase가 생성한 어구 리스트를 필터링하는 과정 <ul> <li> <strong><em>Entity typing model</em></strong>을 아래와 같이 구성</li> <li>일차적인 Entity 후보의 엔티티 타입을 예측</li> <li>ex.) \(none\) type으로 예측되는 경우 <code class="language-plaintext highlighter-rouge">dictionary</code>에서 제외</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">PreTrained BERT &gt; Linear &gt; softmax</code>를 태워 <code class="language-plaintext highlighter-rouge">cross-entropy</code>로 학습 <ul> <li> <code class="language-plaintext highlighter-rouge">BERT's input</code>: \([CLS] \space ctxt_l \space [x_i] \space ... \space [x_j] \space ctxt_r \space [SEP]\) (텍스트 시퀀스)</li> <li> <code class="language-plaintext highlighter-rouge">Linear layer's input</code>: \(V_h = V_{[cls]} \oplus V_{[x_i]} \oplus V_{[x_j]}\)</li> <li> <code class="language-plaintext highlighter-rouge">Relu &gt; softmax</code>: \(P(y_t\mid e_t) = softmax(W^2_t (Relu(W^1_t V_h + b^1_t)) + b^2_t)\)</li> <li> <code class="language-plaintext highlighter-rouge">cross-entropy</code>: \(L_{type} = -\sum_{i=1}^n y_i \log(P(y_i\mid e_i))\)</li> </ul> </li> <li>\(none\) entity 추가 <ul> <li> <strong><em>Entity typing model</em></strong>이 \(none\) entity type을 식별할 수 있도록</li> <li>AutoPhrase의 신뢰도 점수가 0.3보다 낮은 어구를 \(none\) entity type으로 레이블링하여 학습 데이터에 추가</li> </ul> </li> </ul> </li> <li> <strong><em>Entity Filtering</em></strong> <ul> <li> <strong><em>Entity typing model</em></strong>의 예측 값이… <ul> <li>\(none\) entity type으로 분류된 어구 제거</li> <li>여러 entity type으로 분류 예측된 어구 제거</li> <li>남은 어구들을 <code class="language-plaintext highlighter-rouge">original dictionary</code>에 추가하여 확장</li> <li>구성된 <code class="language-plaintext highlighter-rouge">dictionary</code>를 entity recognizer의 학습에 사용</li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/153002199-17fb6fad-3d99-4fdb-8f81-19554bf981d2.png" alt="image-description" width="500"></p> <p><br><br></p> <h3 id="42-entity-recognizer">4.2. Entity Recognizer</h3> <ul> <li> <strong><em>개요</em></strong> <ul> <li>distantly supervised 방식으로 레이블이 할당된 데이터는 error가 포함할 확률이 높음</li> <li> <code class="language-plaintext highlighter-rouge">entity boundary detection</code> &amp; <code class="language-plaintext highlighter-rouge">entity classification</code>을 동시에 모델링할 경우 과적합될 가능성이 높음</li> <li> <strong>따라서</strong>, <code class="language-plaintext highlighter-rouge">boundary</code>, <code class="language-plaintext highlighter-rouge">type classification</code>을 각각 학습 <ul> <li>Section 4.1.은 <code class="language-plaintext highlighter-rouge">type classification</code>의 학습 (<strong><em>Entity typing model</em></strong>)</li> <li>Section 4.2.는 <code class="language-plaintext highlighter-rouge">boundary</code>의 학습 (token interaction model \(M_w\), sequence label model \(M_s\)의 학습)</li> </ul> </li> <li>아래 3가지의 tagging schema를 fusing하여 다방면의 정보(multi-granularity)를 종합 <ul> <li>“Break or Tie” Tagging Schema (\(M_w\))</li> <li>“BIO” Tagging Schema (\(M_s\))</li> <li>“Phrase Matching” Tagging Schema (AutoPhrase)</li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149708907-89ac7aff-8f74-438a-999f-9affad7afc50.png" alt="image-description"></p> <ul> <li> <strong><em>“Break or Tie” Tagging Schema</em></strong> <ul> <li>for <strong>word level</strong> entity boundary (\(M_w\))</li> <li>entity가 분절되는 토큰들에 “Break”</li> <li>entity가 지속되는 토큰들에 “Tie”</li> <li>\(M_w\): output representation from <code class="language-plaintext highlighter-rouge">BERT</code>에 대해 아래와 같은 방식으로 학습 <ul> <li> \[V^\prime_i = concatenate(i\text{-th token}, i+1\text{-th token})\] <ul> <li>\(i\)번째 representation과 \(i+1\)번째 representation의 특징 결합</li> </ul> </li> <li> \[P(c_i|V^\prime_i) = {\exp(c^T_i V^\prime_i) \over \sum_{c_k\in C} \exp(c^T_k V^\prime_i)}\] <ul> <li> \[C = \set{[Break], [Tie]}\] </li> <li>\(P(c_i\mid V^\prime_i)\): \(V_i^\prime\)이 토큰 \(c_i\)가 될 확률</li> </ul> </li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149708061-e2cf9071-fb35-47bf-8408-f20038f65c7f.png" alt="image-description"> <em>“Break or Tie”, 파란색 entity는 모델이 인식하지 못하는 경우를 가정</em></p> <ul> <li> <strong><em>“BIO” Tagging Schema</em></strong> <ul> <li>for <strong>word level</strong> entity boundary (\(M_s\))</li> <li>기존의 NER 태깅 방식과 동일</li> <li>entity 범위가 시작하는 지점에 “B”</li> <li>entity 범위가 지속되는 지점에 “I”</li> <li>entity 범위에 속하지 않는 지점에 “O”</li> <li>\(M_s\): <code class="language-plaintext highlighter-rouge">BERT &gt; Linear &gt; softmax</code> 학습 <ul> <li> \[C = \set{[B], [I], [O]}\] </li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149708302-e07a89e2-44a6-4b4b-b1ba-da79cbaa25c7.png" alt="image-description"> <em>“BIO”, 파란색 entity는 모델이 인식하지 못하는 경우를 가정</em></p> <ul> <li> <strong><em>“Phrase Matching” Tagging Schema</em></strong> <ul> <li>for <strong>corpus level</strong> entity boundary</li> <li>선행 연구들은 corpus 내부의 통계적 특징들을 간과함</li> <li>AutoPhrase의 결과를 태깅 <ul> <li><em>corpus의 통계적 특징들을 반영한 AutoPhrase의 결과를 태깅했으니 통계적 요소를 반영하였다고 생각하는듯…?!</em></li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149708527-cab7f4e0-2e76-4c90-ac5e-4c44e70bc761.png" alt="image-description"> <em>“Phrase Matching”, 파란색 entity는 모델이 인식하지 못하는 경우를 가정</em></p> <ul> <li> <strong><em>결론</em></strong> <ul> <li>각기 다른 entity tagging 방식을 결합하여 마지막 분류의 입력으로 사용</li> </ul> </li> </ul> <h3 id="algorithm-the-process-of-tebner">Algorithm: The process of TEBNER</h3> <p><img src="https://user-images.githubusercontent.com/67779236/153109670-1713af79-7e0a-4a2e-a7b9-1cb8e678b414.png" alt="image-description"></p> <p><br></p> <hr> <p><br></p> <h2 id="5-experiments">5. Experiments</h2> <h3 id="51-experiment-setup">5.1. Experiment Setup</h3> <ul> <li> <strong>Dataset</strong> <ul> <li> <strong>BC5CDR</strong> <ul> <li>Chemical and Disease domain</li> </ul> </li> <li> <strong>NCBI-Disease</strong> <ul> <li>Disease domain</li> </ul> </li> <li> <strong>LaptopReview</strong> <ul> <li>review sentences</li> <li>AspectTerm mentions</li> </ul> </li> </ul> </li> <li> <strong>Training Details</strong> <ul> <li>사전 학습 가중치 <ul> <li>biomedical domain: <code class="language-plaintext highlighter-rouge">"biobert-base-cased-v1.1"</code> </li> <li>technical domain: <code class="language-plaintext highlighter-rouge">"bert-base-cased"</code> </li> </ul> </li> <li>maximum sentence length: <code class="language-plaintext highlighter-rouge">256 tokens</code> </li> <li>hidden representation size: <code class="language-plaintext highlighter-rouge">786</code> </li> <li>learning rate: <code class="language-plaintext highlighter-rouge">3e-5</code> </li> <li>dropout probability: <code class="language-plaintext highlighter-rouge">0.15</code> </li> <li> <code class="language-plaintext highlighter-rouge">AdamW</code> optimizer</li> <li>Multi-layer perceptron for “entity classifier”: <strong>a depth of 2 and a hidden size of 256</strong> </li> </ul> </li> </ul> <p><br><br></p> <h3 id="52-comparing-with-previous-work">5.2. Comparing with Previous Work</h3> <ul> <li> <strong>Baselines</strong> <ul> <li>supervised model <ul> <li><strong>BiLSTM-CRF</strong></li> <li><strong>ELMo-NER</strong></li> <li><strong>BERT-NER</strong></li> </ul> </li> <li>distantly supervised model <ul> <li> <strong>Dictionary Match</strong>: 주어진 <code class="language-plaintext highlighter-rouge">dictionary</code> \(D\)의 단순 string matching</li> <li> <strong>SwellShark</strong>: biomedical 도메인에 특화된 방법, regular expressions가 필요하며 특별한 케이스에 대해선 직접 조정이 필요함</li> <li> <strong>AutoNER</strong>: BiLSTM 모델을 사용해 인접 토큰들의 연결성을 학습, <code class="language-plaintext highlighter-rouge">false-negative labels</code>의 수를 줄임</li> <li> <strong>HAMNER</strong>: 기존 SOTA, headword-based matching을 통해 <code class="language-plaintext highlighter-rouge">dictionary</code>를 확장하고 entity typing model로 entity 범위(spans)를 예측</li> </ul> </li> </ul> </li> <li> <strong>Results</strong> <ul> <li> <strong>AutoNER</strong> &amp; <strong>HAMNER</strong>과 동일한 <code class="language-plaintext highlighter-rouge">dictionary</code> &amp; phrases를 사용하였음에도 더 좋은 성능</li> <li> <strong>SwellShark</strong>가 biomedical 도메인에 특화된 구조이지만 더 나은 성능</li> <li> <strong>AutoNER</strong>도 “Break or Tie” tagging을 적용해 다방면의 정보를 종합하고자 했으나 인접한 토큰들의 연결성만을 모델링하여 성능이 떨어짐</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149711852-97a5fb87-d92b-4ce4-b370-2dd9005b1033.png" alt="image-description"></p> <p><br><br></p> <h3 id="53-impact-of-different-modules">5.3. Impact of Different Modules</h3> <ul> <li> <strong><em>Effectiveness of Dictionary Extension</em></strong> <ul> <li>복잡한 방법들을 사용하지 않았음 <ul> <li>ex). headword matching, semantic similarity calculation, annotations weight setting)</li> </ul> </li> <li>문맥적 의미 정보만을 사용해 <code class="language-plaintext highlighter-rouge">dictionary</code> 확장 <ul> <li>어느 domain에나 적용할 수 있음</li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149712286-2058f8fc-a7a8-406d-98f3-519dd6c184c3.png" alt="image-description"></p> <ul> <li> <strong><em>Influence of the number of Annotations</em></strong> <ul> <li>확장한 <code class="language-plaintext highlighter-rouge">dictionary</code>로 만든 distantly annotations의 수를 조절하며 성능 비교</li> <li>데이터의 수가 늘어날수록 증가하다가 80% 부근에서 수렴하는 경향이 있음</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149712836-b262c47f-8e81-49fb-af97-03d14521d8bf.png" alt="image-description"></p> <ul> <li><strong><em>Ablation studies</em></strong></li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/149712947-d9074f89-da98-432c-b3d9-cbae2a4d204d.png" alt="image-description"></p> <p><br></p> <hr> <p><br></p> <h2 id="6-conclusion">6. Conclusion</h2> <ul> <li>새로운 dictionary extension 방법 제안</li> <li>distant supervision 방식으로 특정 도메인에 적합한 boundary-aware model을 설계</li> <li>어느 도메인에서나 적용될 수 있도록 entity classification model을 사용해 <code class="language-plaintext highlighter-rouge">dictionary</code>를 확장하였음</li> <li>3가지 tagging schema를 적용해, 지역적 &amp; 전역적 측면에서의 entity 인식을 시도하였음</li> </ul> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

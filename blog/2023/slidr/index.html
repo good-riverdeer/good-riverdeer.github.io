@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2023/slidr/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data</h1> <p class="post-meta"> Created on February 20, 2023 </p> <p class="post-tags"> <a href="/blog/2023"> <i class="fa-solid fa-calendar fa-sm"></i> 2023 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/autonomous-driving"> <i class="fa-solid fa-hashtag fa-sm"></i> autonomous_driving</a>   <a href="/blog/tag/self-supervision"> <i class="fa-solid fa-hashtag fa-sm"></i> self-supervision</a>   <a href="/blog/tag/distillation"> <i class="fa-solid fa-hashtag fa-sm"></i> distillation</a>   <a href="/blog/tag/lidar"> <i class="fa-solid fa-hashtag fa-sm"></i> lidar</a>   <a href="/blog/tag/point-cloud"> <i class="fa-solid fa-hashtag fa-sm"></i> point_cloud</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/computer-vision"> <i class="fa-solid fa-tag fa-sm"></i> Computer Vision</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://openaccess.thecvf.com/content/CVPR2022/html/Sautier_Image-to-Lidar_Self-Supervised_Distillation_for_Autonomous_Driving_Data_CVPR_2022_paper.html" rel="external nofollow noopener" target="_blank">Sautier, C., Puy, G., Gidaris, S., Boulch, A., Bursuc, A., &amp; Marlet, R. (2022). Image-to-lidar self-supervised distillation for autonomous driving data. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em> (pp. 9891-9901).</a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. :)</em></p> <p><br></p> <hr> <p><br></p> <h2 id="1-introduction">1. Introduction</h2> <p>이전의 deep network을 이용한 3D segmentation 및 detection 성능은 전적으로 거대한 양의 데이터셋으로부터 비롯되었다고 할 수 있습니다. 반면에, 이 3D lidar point를 레이블링하는 작업은 매우 많은 비용이 필요하죠. 이러한 맥락에서 self-supervision을 도입하게 된다면 거대한 양의 non-annotated data에 먼저 사전 학습하고, 이를 적은 양의 annotated data에 미세조정하는 방식을 사용함으로써 annotating 비용 부담을 크게 완화할 수 있을 것입니다.</p> <p>본 논문에서는 대부분의 자율주행 차량들이 카메라와 lidar 센서를 함께 장착하고 있으며 이렇게 수집되는 데이터는 synchronized(time-aligned) &amp; calibrated(카메라 렌즈로 인한 왜곡이 보정됨) 할 가능성이 높다는 점을 지적하며 다음과 같은 방법을 제시합니다.카메라로 촬영된 calibrated image에 self-supervised pre-trained image representations를 추출해내고 이를 point data에 지식 전이(distill)할 수 있다고 주장하며 그리고 이 과정을 <strong><em>2D-to-3D representation distillation</em></strong>이라 정의했습니다.</p> <p>해당 방법의 구현은 superpixel이라는 개념에서 출발하는데, 논문에서 말하기로는</p> <blockquote> <p>“we use superpixels, which group visually similar regions that are likely to belong to the same object.” <br> 시각적으로 유사한 영역, 즉 같은 객체일 것으로 추정되는 픽셀들의 그룹화</p> </blockquote> <p>라고 말합니다. 본문의 Fig 2.에서 그 예시를 알 수 있습니다.</p> <p><img src="/assets/img/SLidR/fig2.png" alt="image-description"> <em>Figure 2. SLIC superpixels computed on an image from nuScenes</em></p> <p>본 연구에서 이 superpixel을 pooling mask로써 사용한다고 말합니다. 즉, 같은 superpixel 그룹에 속한 3D points와 2D pixels feature들에 대해 contrastive loss를 적용해 두 feature가 매칭되고 pooled 될 수 있도록 하는 것입니다.</p> <p><img src="/assets/img/SLidR/fig1.png" alt="image-description"></p> <p>이러한 방법을 채택함에 따라 아래 두 가지 단점을 완화할 수 있다고 주장합니다.</p> <ol> <li>카메라나 lidar 센서 중 한 가지 센서의 occlusion으로 인한 pixel 및 point의 오매칭, 미매칭 완화 <ul> <li>특히 자율주행 환경과 같이 야외의 경우, 센서가 포집하지 못하는 구역도 존재할 수 있기 때문에 몇몇 point들에 대해선 데이터가 누락될 수 있겠죠.</li> <li>하지만 superpixel 그룹 단위로 pixel과 point를 매칭하게 된다면 데이터 누락에 강건할 수 있겠습니다.</li> <li>내가 누락되었더라도 내 옆에 누군가가 포집되었다면 그 포집된 친구를 따라갈 수 있겠죠?</li> </ul> </li> <li>point cloud 영역 중 밀도있게 포집된(densely) 영역과 듬성듬성(sparsely) 포집된 영역 간의 contrastive loss 가중치를 균형있게 반영할 수 있음 <ul> <li>자율주행 환경에서 중요한 객체는 <code class="language-plaintext highlighter-rouge">cars</code>, <code class="language-plaintext highlighter-rouge">pedestrians</code>, <code class="language-plaintext highlighter-rouge">cyclists</code>와 같이 드물게 포집될 수 있는 객체들인데, 이러한 객체들은 조그만 영역으로 등장할 것이므로 높은 가중치를 부여할 수 있다??</li> <li>라는 뜻으로 해석이 됩니다.</li> </ul> </li> </ol> <p><br></p> <hr> <p><br></p> <h2 id="3-our-approach">3. Our approach</h2> <h3 id="31-image-to-lidar-self-supervised-distillation">3.1. Image-to-Lidar Self-supervised Distillation</h3> <p>본 논문의 주요 방향은 이미 거대한 데이터에 사전학습 되어 있는 2D image representations를 바탕으로 self-supervised distillation 방법을 통해 훌륭한 3D lidar representations를 획득하는 것입니다. 따라서 첫 단계는 2D image의 촬영 시점과 3D point의 포집 시점을 정렬하는 것으로 출발합니다.</p> <h4 id="synchronized-lidar-and-image-data">Synchronized Lidar and image data</h4> <p>특정 촬영 시점 \(t_0\)에서 수집된 데이터는 아래와 같이 두 가지입니다.</p> <ul> <li>point cloud, \(\text{P} = (p_i)_{i=1,...,n} \in \mathbb{R}^{N\times3}\)</li> <li>\(C\)개의 카메라에서 촬영된 \(C\)개의 이미지, \(\text{I}_1, ..., \text{I}_C \in \mathbb{R}^{M\times3}\) <ul> <li>\(M\)은 픽셀 수, 아마도 \(H\times W\)</li> </ul> </li> </ul> <p>수집된 데이터에서 카메라와 lidar 센서 간의 위치 차이는 알려져 있을 것이기 때문에 해당 정보를 사용해, \(t_0\) 시점에서의 각 포인트 \(p_i\)에 대해 이미지 픽셀에 매핑을 수행합니다.</p> <ul> <li>각 카메라 \(c\)에 대하여, \(\rho_c: \mathbb{R}^3 \rightarrow \set{1,...,M} \cup \set{0}\)</li> <li>여기서 \(\set{0}\)은 point가 이미지 픽셀에 매칭되지 않을 때, 해당 point에 할당됩니다.</li> </ul> <blockquote> <p>매칭의 방법은 자세하게 나타나있지 않습니다. camera calibration이나 혹은 다른 트릭에 대한 언급은 없습니다. 필자가 해당 데이터에 대해 익숙하지 않으므로, 해당 분야에 standard가 되는 변환 or 매칭의 방법이 있을 것이라 생각됩니다.</p> </blockquote> <h4 id="distilling-network-representations">Distilling network representations</h4> <ul> <li>point cloud를 \(D\)차원의 feature로 추출해내는 3D deep neural network <ul> <li> \[f_{\theta_{bck}}: \mathbb{R}^{N\times 3} \rightarrow \mathbb{R}^{N\times D}\] </li> </ul> </li> <li>self-supervised pre-trained image network <ul> <li> \[g_{\bar\omega_{bck}}: \mathbb{R}^{M\times 3} \rightarrow \mathbb{R}^{M^\prime \times E}\] </li> <li>이 때 image network의 parameter \(\bar\omega_{bck}\)는 학습하지 않습니다.</li> </ul> </li> </ul> <p>특정 포인트 집합 \(f_{\theta_{bck}}(\text{P})\)에 대해서 \(g_{\bar\omega_{bck}} (\text{I}_1), ..., g_{\bar\omega_{bck}}(\text{I}_C)\)에 대해 superpixel 영역을 기반으로 contrastive loss를 걸어 point features와 pre-trained image features의 feature aligning을 바탕으로 \(\theta_{bck}\)의 학습을 이루겠다는 것이 본 연구의 핵심입니다.</p> <h3 id="32-superpixel-driven-contrastive-distillation-loss">3.2. Superpixel-driven Contrastive Distillation Loss</h3> <p>먼저 superpixel을 어떻게 선택하게 되었는지 설명합니다. 저자들은 semantic segmentation과 object detection 같은 downstream task를 해결하고자 하고, 이를 위한 3D representation은 <strong>objects or object parts에 대한 “reason”이 필요</strong>하다고 생각했습니다. 따라서 지나치게 디테일한 픽셀 단계에선 feature간의 contrast를 계산하기 싫었고, object level에서의 contrast를 계산하고자 했습니다. 이에 적합한 정보가 superpixel이라고 생각했던 것이죠.</p> <ul> <li>(\(c\) 시점에서 촬영된) 하나의 image \(\text{I}_c\)에 대해 \(Q\)개의 superpixel로 쪼갭니다. <ul> <li>이 pixel indices 집합을 \(\mathcal{S}_1^c, ..., \mathcal{S}_Q^c\)로 정의합니다.</li> <li>이들 집합들은 서로 원소들을 공유하지 않는 집합들이 될 것입니다.</li> </ul> </li> <li>이 집합들을 앞서 정의했던 3D-to-2D mapping function을 이용해 일종의 “superpoint”와 매칭합니다. <ul> <li>\(\mathcal{G}_1^c, ..., \mathcal{G}_Q^c\), where \(\mathcal{G}_s^c = \set{i: \rho_c(p_i) \in \mathcal{S}_s^c}\)</li> <li>즉, point cloud 내 각 point들에 대해 \(\rho_c\) function을 적용하고 그 결과가 \(\mathcal{S}_s^c\) 집합에 포함되어 있으면 \(\mathcal{G}_s^c\) 집합에 할당하는 작업입니다.</li> </ul> </li> </ul> <p>저자들이 원하는 건 이 superpoint(\(\mathcal{G}_s^c\))가 다수의 superpixel 중 가장 유사한 superpixel(\(\mathcal{S}_s^c\))에 근접하기를 원합니다. 그 이외의 superpixel(\(\mathcal{S}_{s^\prime}^{c^\prime}\))들은 제외하고 말이죠.</p> <p>때문에, 아래와 같은 방식으로 loss를 정의했습니다.</p> <h4 id="contrastive-loss">Contrastive loss.</h4> <p>각 카메라 \(c\)에 대해 superpoint 및 superpixel feature를 아래와 같이 average pooling을 통해 추출합니다. 여기서 각 \(h\) layer는 superpoint와 superpixel feature 차원을 동일하게 맞추기 위해 붙인 것이 되겠죠.</p> \[f_s^c = \frac{1}{\left| \mathcal{G}_s^c \right|} \sum_{i\in \mathcal{G}_s^c} (h_{\theta_{head}} \circ f_{\theta_{bck}})(\text{P})_i\] \[g_s^c = \frac{1}{\left| \mathcal{S}_s^c \right|} \sum_{j\in \mathcal{S}_s^c} (h_{\omega_{head}} \circ f_{\bar\omega_{bck}})(\text{I}_c)_j\] \[h_{\theta_{head}}: \mathbb{R}^{N\times D} \rightarrow \mathbb{R}^{N \times F}\] \[h_{\omega_{head}}: \mathbb{R}^{M^\prime \times D} \rightarrow \mathbb{R}^{M \times F}\] <p>여기서 한 superpoint feature에 대해 아래와 같이 contrastive loss를 걸어줍니다. 아래 수식에서 \(g_s^c\)는 가장 연관있을 것이라 여겨지는 superpixel, 반면에 \(g_{s^\prime}^{c^\prime}\)은 매칭된 superpixel 중 나머지 superpixel 입니다.</p> <p>수식을 해석해보면 가장 유사하게 매칭되는 superpixel feature \(\mathcal{g}_s^c\)와의 contrastive는 최대한 줄이면서, 그 이외의 다른 superpixel feature들인 \(\mathcal{g}_{s^\prime}^{c^\prime}\)와의 contrastive는 최대한 벌어질 수 있도록 설계되어 있습니다. 학습이 진행될수록 superpoint feature \(f_s^c\)는 점점 \(g_s^c\)와는 근접하고 \(g_{s^\prime}^{c^\prime}\)와는 멀어질 겁니다.</p> \[\mathcal{L}(\theta_{bck}, \theta_{head}, \omega_{head}) = - \sum_{c,s} \log \left[ \frac{\exp{(\left&lt; f_s^c, g_s^c \right&gt; / \tau)}}{\sum_{c^\prime, s^\prime} \exp{(\left&lt; f_s^c, g_{s^\prime}^{c^\prime} \right&gt; / \tau)}} \right]\] <p>where \(\left&lt; \cdot, \cdot \right&gt;\) denotes the scalar product in \(\mathbb{R}^F\)</p> <h4 id="discussion">Discussion</h4> <ul> <li>Pre-training을 수행함에 있어 superpoint-superpixel level에서의 loss를 계산함의 효용성 <ul> <li>저자들은 절대 한 superpixel이 서로 다른 두 객체를 포함하고 있지 않기 때문에 loss를 계산함에 있어 일관적이고 바람직한 point features만을 다룰 것</li> </ul> </li> <li>포집되는 point cloud의 밀도에 따라 달라질 수 있는 loss 가중치의 균형 <ul> <li>일반적으로 포집되는 point cloud는 그 point들의 밀집도가 다름</li> <li>superpixel 단위로 loss를 계산함에 따라 자연스럽게 high or low density에 관계없이 동등한 가중치로써 각각 객체들에 대한 loss를 계산할 수 있을 것임</li> </ul> </li> <li>카메라와 lidar 센서 간의 위치 오차는 0이 될 수 없음 <ul> <li>따라서 센서 위치 오차를 보정하는 과정이 필수적인데, 이 과정에서 point-pixel 매칭 오차 역시 발생할 수 있음. 특히 occlusion 및 motion과 같은 노이즈까지 고려하면서 오차 보정은 어려움</li> <li>superpixel 및 superpoint 단위로 average pooling을 수행함으로써 잘못된 매칭의 영향을 완화할 수 있을 것으로 기대</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="4-experiments">4. Experiments</h2> <p>… 중략 …</p> <h3 id="46-technical-limitations">4.6. Technical Limitations</h3> <ol> <li>저조도 환경에서 object segment 어려움에 따른 성능 저하</li> <li>두 superpixel feature가 유사한 경우에도 모델 설계상 target superpoint feature에 가장 유사한 단 하나의 superpixel feature에만 가까울 수 있도록 학습을 강요함 <ul> <li>해당 단점은 superpixel feature extractor의 가중치를 고정해놓는 본 연구의 설계 특성상 더 치명적임</li> <li>향후 연구에서 보완해야할 지점</li> </ul> </li> </ol> <p>한계점 2에 대해서 더 생각해보겠습니다. 아래 그림과 같이 superpixel이 주어졌습니다. 엄밀히 말하면 \(f_1^c\)는 point cloud 상의 superpoint를 의미하는데, 여기에선 편의상 superpixel 이미지 위에 표현했습니다.</p> <p><img src="/assets/img/SLidR/fig3.png" alt="image-description"></p> <p>superpoint \(f_1^c\)에 대한 representation을 학습함에 있어 가장 유사한 superpixel이 \(g_1^c\), 그 두 번째로 유사한 superpixel이 \(g_2^c\)라고 하겠습니다. 이 때, 충분히 \(g_1^c\)와 \(g_2^c\)는 충분히 유사해 보이기 때문에 같은 클래스로 보아도 무방하죠. \(g_1^c\)와 \(g_2^c\)를 모두 loss 식의 분자로 올려서 가깝게 하도록 학습을 진행하고 싶지만, 현재 모델의 구조상 단 하나의 superpixel 밖에 분자로 올라갈 특권을 얻게 됩니다. 따라서 가장 유사한 \(g_1^c\)만이 분자로 올라가 \(f_1^c\)와 가까워질 기회를 얻게됩니다. 저자들은 이 점을 한계점으로 지적했고, 이를 향후 연구과제로 언급하고 있습니다.</p> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

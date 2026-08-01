@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] DocFormer: End-to-End Transformer for Document Understanding | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2021/docformer/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] DocFormer: End-to-End Transformer for Document Understanding</h1> <p class="post-meta"> Created on December 23, 2021 </p> <p class="post-tags"> <a href="/blog/2021"> <i class="fa-solid fa-calendar fa-sm"></i> 2021 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/document-understanding"> <i class="fa-solid fa-hashtag fa-sm"></i> document_understanding</a>   <a href="/blog/tag/multimodal"> <i class="fa-solid fa-hashtag fa-sm"></i> multimodal</a>   <a href="/blog/tag/transformer"> <i class="fa-solid fa-hashtag fa-sm"></i> transformer</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/computer-vision"> <i class="fa-solid fa-tag fa-sm"></i> Computer Vision</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://arxiv.org/abs/2106.11539" rel="external nofollow noopener" target="_blank">Appalaraju, S., Jasani, B., Kota, B. U., Xie, Y., &amp; Manmatha, R. (2021). DocFormer: End-to-End Transformer for Document Understanding. <em>arXiv preprint arXiv:2106.11539.</em></a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. 올바르지 못한 내용에 대한 피드백을 환영합니다 :)</em></p> <hr> <h2 id="1-introduction">1. Introduction</h2> <ul> <li>Visual Document Understanding (VDU) <ul> <li>PDF 형태 혹은 이미지 형태인 디지털 문서에 대한 이해 <ul> <li>entity grouping, sequence labeling, document classification</li> </ul> </li> <li>문서에서 OCR(Optical Character Recognition)을 수행하는 연구는 많지만 VDU를 위해선 <strong>구조와 레이아웃</strong>을 모두 반영해야 함</li> <li>최근 Transformer 구조를 통해 <strong>text, spatial, image</strong>를 모두 반영하여 이를 해결하려는 연구가 다수 진행 <ul> <li>각 연구마다 <strong>text, spatial, image</strong>의 세 가지 modality를 결합하는 방식이 각자 다름</li> <li>NLP(Natural Language Processing)에서 그랫듯이 unsupervised 방식으로 사전 학습(pre-training)하고 downstream task에 맞게 미세 조정(fine-tuning)하는 것이 일반적</li> </ul> </li> </ul> </li> <li> <em>Cross-modality feature correlation</em> <ul> <li>multi-modal 학습은 <strong>텍스트</strong>를 임의의 범위의 <strong>시각적 영역</strong>에 매핑하는 과정 <ul> <li>“사람”이라는 단어를 설명하는 텍스트 modality와 달리, 이에 해당하는 visual modality는 단순 픽셀 집합에 불과함</li> </ul> </li> <li>때문에 modality간의 feature 상관관계를 모델링하는 것이 어려움</li> </ul> </li> <li>DocFormer <ul> <li>Architecture 특징 <ul> <li>multi-modal self-attention</li> <li>shared spatial embeddings</li> </ul> </li> <li>pre-training with 3 unsupervised multi-modal tasks <ul> <li>multi-modal masked language modeling task (MM-MLM)</li> <li>learn-to-reconstruct (LTR)</li> <li>text describes image (TDI)</li> </ul> </li> </ul> </li> </ul> <p><strong>[@ Contributions]</strong></p> <ul> <li>문서 이미지에서 <strong>text, visual, spatial</strong> features를 결합할 수 있는 새로운 형태의 multi-modal attention layer 제안</li> <li>Multi-modal feature collaboration을 위한 세 가지 unsupervised pre-training task 제안, 이 중 두 가지는 해당 분야에 새로운 방법: MM-MLM, LTR</li> <li>end-to-end로 학습 가능하고 사전 학습된 object detection 모델을 사용하지 않음</li> <li>VDU의 4가지 downstream task에 대해 DocFormer는 state-of-the-art 성능을 달성</li> <li>문서 이미지에서 텍스트를 추출하기 위한 Custom OCR 모델을 사용하지 않음</li> </ul> <hr> <h2 id="2-background">2. Background</h2> <p><strong>[@ Grid based methods using CNN]</strong></p> <ul> <li>구조적인 형태가 많은 문서(예: forms, tables, receipts, invoices)</li> <li>invoice(송장) 문서에서 표의 형태를 통해 유형 분류 수행 <ul> <li>송장번호, 날짜, 공급업체 이름, 주소, …</li> </ul> </li> </ul> <p><strong>[@ BERT transformer-encoder based methods]</strong></p> <ul> <li> <a href="https://dl.acm.org/doi/abs/10.1145/3394486.3403172" rel="external nofollow noopener" target="_blank">LayoutLM</a> <ul> <li>BERT 아키텍처를 문서 이미지에 맞게 수정하여 document understanding 수행 <ul> <li>2D spatial coordinate embeddings</li> <li>1D position</li> <li>text token embeddings</li> </ul> </li> <li>visual features and its bounding box coordinates for each word token, obtained using a Faster-RCNN</li> <li>11M 개의 unlabeled page를 통해 사전학습</li> </ul> </li> <li> <a href="https://dl.acm.org/doi/abs/10.1145/3394486.3403172" rel="external nofollow noopener" target="_blank">LayoutLMv2</a> <ul> <li>LayoutLM을 향상 <ul> <li>모델에 visual feature가 입력되는 방식을 개선</li> <li>text token에 더해주는 대신 개별적이고 독립적인 token으로 처리</li> <li>pre-training task를 추가</li> </ul> </li> </ul> </li> <li> <a href="https://openreview.net/forum?id=punMXQEsPr0" rel="external nofollow noopener" target="_blank">BROS</a> <ul> <li>2D spatial embeddings</li> <li>graph-based classifier <ul> <li>text token 사이의 엔티티 상관관계 예측에 사용</li> </ul> </li> </ul> </li> </ul> <p><strong>[@ Multi-modal transformer encoder-decoder based methods]</strong></p> <ul> <li> <a href="https://arxiv.org/abs/2101.11272" rel="external nofollow noopener" target="_blank">Layout-T5</a> <ul> <li>a question answering task on a database of web article document images</li> </ul> </li> <li> <a href="https://arxiv.org/abs/2101.11272" rel="external nofollow noopener" target="_blank">TILT</a> <ul> <li>convolutional features + T5 architecture</li> </ul> </li> </ul> <hr> <h2 id="3-approach">3. Approach</h2> <p><strong>[@ Conceptual Overview]</strong></p> <ul> <li>Joint Multi-Modal <ul> <li>vision feature와 text feature가 하나의 긴 시퀀스로 결합</li> <li> <em>cross-modality feature correlation</em>의 측면에서 self-attention의 학습이 어려울 것임</li> </ul> </li> <li>Two-Stream Multi-Modal <ul> <li>각 modality를 담당하는 별도의 branch를 사용</li> <li>이미지와 텍스트의 결합이 끝에 이르러서야 발생하기 때문에 이상적인 방법이 아님</li> </ul> </li> <li>Single-Stream Multi-Modal <ul> <li>visual feature도 text token과 동일한 형태로 만들어 서로 더해줌</li> <li>vision과 language feature는 서로 다른 유형의 데이터, 단순하게 더하는 것은 부자연스러운 방법</li> </ul> </li> <li>Discrete Multi-Modal (paper’s) <ul> <li>visual, spatial feature를 text feature에서 분리하여 반복되는 각각의 transformer layer마다 residual하게 입력</li> <li>text feature에 대한 visual, spatial feature의 영향이 각 transformer layer마다 달라질 것을 기대하였음</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147203580-88836e60-adef-44ff-8031-4a73cc1d8aa4.png" alt="img-description" width="500"></p> <h3 id="31-model-architecture">3.1. Model Architecture</h3> <p><strong>[@ features extract &amp; processing]</strong></p> <ul> <li> <strong>Visual features</strong> <ul> <li>입력 이미지 \(v\in \mathbb R^{3\times h\times w}\)를 ResNet50 CNN으로 feature 추출: \(f_{cnn}(\theta, v)\) <ul> <li>ResNet50의 4번째 블록 feature 사용 \(v_{l_4} \in \mathbb R^{c\times h_l \times w_l}\)</li> <li> \[v_{l_4} = f_{cnn}(\theta, v)\] </li> <li> \[c=2048, h_l = {h\over 32}, w_l = {w\over 32}\] </li> </ul> </li> <li>\(1\times 1\) convolution을 통해 채널 \(c\) 축소 <ul> <li>transformer encoder의 입력 token의 수인 \(d\)로 축소</li> <li> \[(c, h_l, w_l) \to (d, h_l, w_l)\] </li> </ul> </li> <li>flatten &amp; linear transformation <ul> <li> \[(d, h_l, w_l) \to (d, h_l \times w_l) \to (d, N)\] </li> <li> \[d=768, N=512\] </li> </ul> </li> </ul> </li> </ul> \[\bar V = linear(conv_{1\times 1}(f_{cnn}(\theta, v)))\] <ul> <li> <strong>Language features</strong> <ul> <li>OCR로 추출한 텍스트 \(t\)를 tokenizing <ul> <li>word-piece tokenizer 사용</li> <li> \[t_{tok} = \{[CLS], t_{tok_1}, t_{tok_2}, ..., t_{tok_n}\}, (n=511)\] </li> <li>한 문서에서 나타나는 토큰 수가 <ul> <li>511보다 큰 경우 나머지는 무시</li> <li>511보다 작은 경우 나머지 공간은 \([PAD]\) 토큰으로 채움, \([PAD]\) 토큰은 self-attention 계산 과정에서 무시</li> </ul> </li> </ul> </li> <li>trainable embedding layer \(W_t\)로 사영 <ul> <li>해당 레이어의 가중치는 LayoutLMv1의 사전학습 가중치를 사용</li> </ul> </li> </ul> </li> </ul> \[\bar T = W_t(t_{tok})\] <ul> <li> <strong>Spatial features</strong> <ul> <li>각 단어 \(k\)개 대하여 bounding box 좌표값 \(b_k=(x_1, y_1, x_2, y_2, x_3, y_3, x_4, y_4)\)</li> <li>위 \(b_k\)만 사용하는 것에 그치지 않고 추가적인 정보를 더 인코딩 <ul> <li>bounding box의 높이 \(h\), 너비 \(w\)</li> <li>네 모서리와 중점에 대해 word box간의 상대적 거리 <ul> <li> \[A_{rel}=\left\{A^{k+1}_{num}-A^k_{num}\right\}\] </li> <li> \[A\in (x, y); num\in(1, 2, 3, 4, c)\] </li> <li>\(c\)는 중점</li> <li>\(k\) index는 top-left \(\to\) bottom-right 방향으로 증가</li> <li>즉, \(k+1\)번째 word box는 \(k\)번째 word box의 우하향 방향에 위치</li> </ul> </li> <li>\(P^{abs}\): 1D positional encoding</li> </ul> </li> <li>\(x\)와 \(y\), visual feature \(\bar V\)와 language feature \(\bar T\)에 대해 각각 따로 임베딩 행렬을 두고 따로 학습하여 계산 <ul> <li>spatial 영향은 modality 별로 각각 발생할 것이라고 생각</li> </ul> </li> </ul> </li> </ul> \[\bar V_s = W^x_v(x_1, x_3, w, A^x_{rel}) + W^y_v(y_1, y_3, h, A^y_{rel}) +P^{abs}_v,\] \[\bar T_s = W^x_t(x_1, x_3, w, A^x_{rel}) + W^y_t(y_1, y_3, h, A^y_{rel}) +P^{abs}_t\] <p><strong>[@ Multi-Modal Self-Attention Layer]</strong></p> <ul> <li>a transformer encoder \(f_{enc}\) outputs a multi-modal feature representations \(\bar M\) of the same shape as each of the input features (\(d=768, N=512\)) <ul> <li>\(\eta\)는 transformer의 파라미터</li> </ul> </li> </ul> \[\bar M = f_{enc}(\eta, \bar V, \bar V_s, \bar T, \bar T_s)\] <ul> <li>\(i\)번째 입력 토큰에 대한 \(l\)번째 transformer layer의 multi-modal feature</li> </ul> \[\bar M^l_i = \sum_{j=1}^L {\exp(\alpha_{ij})\over \sum_{j^\prime=1}^n \exp(\alpha_{ij^\prime})}(x^l_j W^{V, l})\] <p><img src="https://user-images.githubusercontent.com/67779236/147220758-50672405-9b41-4c3a-bbc7-cc0826c8e166.png" alt="img_description"></p> \[\alpha_{ij} = {1\over \sqrt d} (x^l_i W^{Q, l})(x^l_j W^{K, l})^T\] <p>generalization을 위한 \(\sqrt d\)와 \(l\)번째 레이어의 것이라는 표기를 제거하여 간단하게 나타내면,</p> \[\alpha_{ij} = (x_i W^{Q})(x_j W^{K})^T\] <p>여기서 visual feature와 text feature에 대해 각각 다른 연산 흐름을 갖는다.</p> <ul> <li> <strong>attention distribution for visual feature</strong> <ul> <li>\(x^v\)는 각 토큰의 visual feature</li> <li> <code class="language-plaintext highlighter-rouge">query 1D relative attn.</code>, <code class="language-plaintext highlighter-rouge">key 1D relative attn.</code>, <code class="language-plaintext highlighter-rouge">visual spatial attn.</code>을 모두 더해주어 <em>local feature</em>를 포착하는데 힘을 쏟음</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147210661-7d7267bd-e9f6-4d83-afcf-69eb690d879e.png" alt="img-description"></p> <p><img src="https://user-images.githubusercontent.com/67779236/147221523-512b5709-f8fe-4420-9146-ff4143252130.png" alt="img-description"></p> <ul> <li> <strong>attention distribution for text feature</strong> <ul> <li>위 visual feature에서의 연산과 거의 비슷함</li> </ul> </li> </ul> \[\alpha_{ij}^t = (x_i W^Q_t)(x_j W^K_t) + (x_i W^Q_t\alpha_{ij}) + (x_j W^K_t\alpha_{ij}) + (\bar T_s W_s^Q)(\bar T_s W_s^K)\] <p><img src="https://user-images.githubusercontent.com/67779236/147222945-22b1a277-872d-4981-aeb2-a0db5bc491a5.png" alt="img-description"></p> <ul> <li>단, 입력 토큰 \(x_i\)는 이전 transformer layer의 output인 multi-modal feautre (만약 첫 번째 레이어라면 word embedding일 것) <ul> <li>모든 transformer layer에 visual feature는 모두 동일하게 입력이 주어지지만, text feature는 transformer layers stack을 따라 흐르기 때문이다. (아래 그림 참조)</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147222699-06b190d5-b603-4e06-873f-805fcc67db9a.png" alt="img-description" width="500"> <em>visual feature는 각 transformer layer에 따로따로 투입, text feature(word embedding)은 transformer layers stack을 타고 흐름</em></p> <ul> <li>multi-modal feature output <ul> <li>\(l\)번째 transformer layer의 output은 \(\bar M_l = \hat V_l + \hat T_l\)</li> </ul> </li> </ul> <blockquote> <p>본 논문에서 강조하는 점 중 하나는 Spatial embeddings를 위한 attention 가중치를 공유하고 있다는 것인데, 이는 위 attention 연산 흐름을 나타내는 그림에 spatial Query, Key matrix가 visual과 text 모두 분홍색으로 같은 색으로 칠하는 것으로 강조하고 있고, 아래 실험(4. Experiments)을 통해 이에 대한 효과를 입증하고 있다.</p> </blockquote> <h3 id="32-pre-training">3.2. Pre-training</h3> <p><img src="https://user-images.githubusercontent.com/67779236/147306046-e08f951d-09d5-4a45-8a4a-f26da1cff1e9.png" alt="img-description"></p> <h4 id="multi-modal-masked-language-modeling-mm-mlm"><strong>Multi-Modal Masked Language Modeling (MM-MLM)</strong></h4> <ul> <li>기존 BERT에서 소개되었던 기존 Masked Language Modeling (MLM) task를 개선 <ul> <li>텍스트 시퀀스 \(t\)에서 일부를 마스킹한 corrupted 시퀀스 \(\tilde t\)</li> <li>multi-modal feature embedding인 \(\bar M\)을 바탕으로 원래 시퀀스 \(t\)로 복구하는 task</li> <li>LayoutLMv2와 같은 연구에서는 마스킹한 텍스트에 해당하는 이미지 영역도 같이 마스킹하였으나, 본 연구에서는 이미지 영역에 대한 마스킹을 하지 않음</li> <li>마스킹 비율은 BERT의 것과 동일</li> </ul> </li> <li>Cross-entropy loss로 학습</li> </ul> <h4 id="learn-to-reconstruct-ltr"><strong>Learn To Reconstruct (LTR)</strong></h4> <ul> <li>MM-MLM task의 이미지 버전 (image reconstruction)</li> <li>multi-modal feature embedding \(\bar M\)을 shallow decoder로 투입, 원래 입력 이미지로 복구 <ul> <li>auto-encoder를 통한 image reconstruction과 비슷함</li> </ul> </li> <li>smooth-L1 loss로 학습</li> </ul> <h4 id="text-describes-image-tdi"><strong>Text Describes Image (TDI)</strong></h4> <ul> <li>위 두 사전학습 task(MM-MLM, LTR)가 <em>local features</em>에 집중하였던 것과 다르게 <em>global features</em>에 집중한 task</li> <li>multi-modal feature embedding \(\bar M\)을 입력으로 단일 linear layer를 통과해 binary classification 수행 <ul> <li>한 배치 내에서 80%는 올바른 text-image pair, 20%는 잘못된 text-image pair를 구성하도록 하였음</li> <li>단, 잘못된 text-image pair가 구성될 경우 LTR task의 loss는 무시</li> </ul> </li> <li>binary cross-entropy로 학습</li> </ul> <h4 id="final-pre-training-loss"><strong>final pre-training loss</strong></h4> \[L_pt = \lambda L_{MM-MLM} + \beta L_{LTR} + \gamma L_{TDI}\] \[\lambda=5, \beta=1, \gamma=5\] <hr> <h2 id="4-experiments">4. Experiments</h2> <ul> <li>개요 <ul> <li>모든 실험에 걸쳐 training set을 통해 fine-tuning</li> <li>test나 validation set에 대한 결과</li> <li>데이터셋 별로 별도의 특화된 hyper-parameter tuning은 진행하지 않았음</li> </ul> </li> <li>Models <ul> <li>기존 transformer encoder model에 대한 terminology를 따름 <ul> <li>12개의 transformer layer가 있는 경우 <em>-base</em> 모델 (768 hidden state and 12 attention heads)</li> <li>24개의 transformer layer가 있는 경우 <em>-large</em> 모델 (1024 hidden state and 16 attention heads)</li> </ul> </li> <li>text and spatial features만 사용하는 모델에 대해서도 실험 <ul> <li>DocFormer의 유연성 강조</li> <li>visual features가 포함됨으로써 더 나아지는 모습 강조</li> </ul> </li> </ul> </li> </ul> <h3 id="41-sequence-labeling-task">4.1. Sequence Labeling task</h3> <ul> <li>FUNSD dataset <ul> <li>form understanding을 위한 데이터셋 <ul> <li>문서 내 각 요소들의 entity 유형 및 클래스가 레이블링 되어 있음 (아래 그림 참조)</li> </ul> </li> <li>149 train / 50 test pages</li> </ul> </li> <li>Sequence labeling task <ul> <li>각 구성 요소의 클래스를 예측하는 task</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147306304-f1070b23-0e50-44e4-9c44-c13b3122c71a.png" alt="img-description" width="500"> <em>LayoutLMv2가 11M의 데이터로 사전학습한 것에 반해 DocFormer는 5M의 데이터로 학습한 결과임을 강조하고 있음</em></p> <p><img src="https://user-images.githubusercontent.com/67779236/147306354-c5d65726-900d-4137-b605-48154e357764.png" alt="img-description" width="500"> <em>Qualitative result</em></p> <h3 id="42-document-classification-task">4.2. Document Classification task</h3> <ul> <li>RVL-CDIP dataset <ul> <li>320,000 train / 40,000 validation / 40,000 test</li> <li>grayscale images</li> <li>16 classes</li> <li>text 및 layout 정보는 Tesseract OCR로 도출</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147306785-876ead33-1a5a-4ae3-be15-365f00eb0d7e.png" alt="img-description" width="500"></p> <h3 id="43-entity-extraction-task">4.3. Entity Extraction Task</h3> <ul> <li>OCR로 추출한 정보들(text, spatial)과 문서 이미지(image)를 조합</li> <li>각 entity의 정보를 예측하는 task</li> <li>CORD dataset <ul> <li>영수증 이미지 데이터셋</li> <li>30 fields under 4 categories</li> </ul> </li> <li>Kleister-NDA dataset <ul> <li>legal NDA documents</li> <li>4개의 fixed labels를 추출하는 데이터셋</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147307764-38bf46b9-49d3-4908-9d28-042c4bb7145d.png" alt="img-description"></p> <p><img src="https://user-images.githubusercontent.com/67779236/147307430-8429d217-2852-4fd3-9165-c9d90065247a.png" alt="img-description" width="500"></p> <h3 id="44-more-experiments">4.4. More Experiments</h3> <p><strong><em>Shared or Independent Spatial embeddings?</em></strong></p> <ul> <li>vision and language modalities 간의 sharing spatial embedding의 효과</li> <li>sharing spatial embedding을 통해 <em>feature correlation</em>을 학습할 수 있다고 주장</li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147308252-8bdb063b-d6d9-4bb2-b41c-15c6b48eb016.png" alt="img-description" width="500"></p> <p><strong><em>Do our pre-training tasks help?</em></strong></p> <ul> <li>비교적 학습 데이터 수가 적은 데이터셋에서는 사전 학습이 필요한 것으로 보임</li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147308342-bea71902-bef9-4a28-a121-13934965909d.png" alt="img-description" width="500"></p> <p><strong><em>Does a deeper projection head help?</em></strong></p> <ul> <li>위 실험 결과들은 모두 downstream task에 단일 linear layer만으로 예측한 결과임</li> <li>(\(fc\to ReLU \to LayerNorm \to fc\)) 형태의 더 깊은 projection head를 사용하는 것의 효과에 대한 실험</li> <li>학습 데이터가 비교적 많은 데이터셋에 대해 효과를 보였음</li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/147308539-689df192-d3d0-4009-8648-963850a14a4a.png" alt="img-description" width="500"></p> <h3 id="45-ablation-study">4.5. Ablation Study</h3> <p><img src="https://user-images.githubusercontent.com/67779236/147308592-1072704d-ea88-4c5a-8fa9-e943dbf41c6f.png" alt="img-description" width="500"> <em>pre-training task의 유무에 따른 결과 비교</em></p> <p><img src="https://user-images.githubusercontent.com/67779236/147308625-3a97915b-5cde-4c69-9896-3f16481857d5.png" alt="img-description" width="500"> <em>DocFormer의 구성요소 유무에 따른 결과 비교</em></p> <hr> <h2 id="5-conclusion">5. Conclusion</h2> <ul> <li>DocFormer 제안, 다양한 Visual Document Understanding tasks에 대한 end-to-end trainable transformer based model</li> <li>multi-modal attention 방법론 제안</li> <li>두 가지 새로운 vision-plus-language 사전학습 task 제안</li> <li>실험을 통해 DocFormer가 비교적 규모가 작은 모델임에도 4가지 데이터셋에 대해 SOTA 성능을 달성</li> <li>Future works <ul> <li>multi-lingual 환경에 대한 DocFormer 연구</li> <li>info-graphics, maps, web-pages와 같은 다양한 형태의 문서에 대한 연구</li> </ul> </li> </ul> <hr> <blockquote> <p>Microsoft의 LayoutLM를 잇는 Amazon의 document를 위한 transformer 모델이다. LayoutLM과 비교했을 때 사용하는 문서의 요소들이나 방법들이 크게 다르지는 않는 것 같다. 다만 그 형태를 조금씩 바꾸었음에도 11M \(\to\) 5M으로 사전학습에 사용한 데이터셋 수를 크게 줄인 것은 흥미로운 부분이다.</p> </blockquote> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

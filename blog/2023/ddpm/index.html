@@ -1,0 +1,582 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] Denoising diffusion probabilistic models | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2023/ddpm/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] Denoising diffusion probabilistic models</h1> <p class="post-meta"> Created on July 19, 2023 </p> <p class="post-tags"> <a href="/blog/2023"> <i class="fa-solid fa-calendar fa-sm"></i> 2023 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/diffusion"> <i class="fa-solid fa-hashtag fa-sm"></i> diffusion</a>   <a href="/blog/tag/generative-model"> <i class="fa-solid fa-hashtag fa-sm"></i> generative_model</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/computer-vision"> <i class="fa-solid fa-tag fa-sm"></i> Computer Vision</a>   <a href="/blog/category/diffusion"> <i class="fa-solid fa-tag fa-sm"></i> Diffusion</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <ul> <li><a href="https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html" rel="external nofollow noopener" target="_blank">Ho, J., Jain, A., &amp; Abbeel, P. (2020). Denoising diffusion probabilistic models. <em>Advances in neural information processing systems, 33</em>, 6840-6851.</a></li> <li><a href="https://github.com/hojonathanho/diffusion" rel="external nofollow noopener" target="_blank">official implementation</a></li> <li><a href="https://github.com/lucidrains/denoising-diffusion-pytorch" rel="external nofollow noopener" target="_blank">pytorch implementation</a></li> </ul> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. :)</em></p> <p><br></p> <hr> <p><br></p> <h2 id="1-introduction">1. Introduction</h2> <p>Deep generative models, 심층 신경망을 활용한 생성 모델들은 여러 다양한 모달리티에서 널리 쓰이며 높은 품질의 데이터 샘플들을 생성하는 데 활용되어왔습니다. GAN(Generative adversarial networks)과 VAE(variational autoencoder)가 대표적입니다.</p> <p>본 논문에서는 diffusion probabilistic model, 즉 diffusion model을 생성 모델로써 제안합니다. 저자들은 diffusion model을 <strong>“똑같은 샘플을 생성하기 위해 variational inference를 통해 일정 시간 파라미터가 학습되는 Markov chain”</strong>으로 정의합니다. </p> <p><img src="/assets/img/DDPM/fig1.png" alt="image-description"></p> <p>위 이미지에서 \(q(\mathbf{x}_t \mid \mathbf{x}_{t-1})\) 과정을 <em>diffusion process</em>. 반대로, \(p_{\theta}(\mathbf{x}_{t-1} \mid \mathbf{x_t})\) 과정을 <em>diffusion process</em>를 역으로 되돌리며 학습하는 과정인 <em>reverse process</em>라고 이해할 수 있습니다. 이와 같은 <em>reverse process</em>를 학습함으로써 노이즈가 쌓여있는 \(\mathbf{x}_T\)로부터 원본 데이터 \(\mathbf{x}_0\)를 복원할 수 있습니다.</p> <p><br></p> <hr> <p><br></p> <h2 id="2-background">2. Background</h2> <p>지금까지의 latent variable을 통해 생성해냈던 여타 다른 생성모델들과 이 diffusion model을 다르게 만드는 점이 바로 <em>diffusion process</em>입니다. latent variable을 활용하는 대표적 모델 VAE는 latent를 encoding하는 encoder와 이를 decoding하는 decoder를 모두 학습하는 반면, diffusion model은 <em>forward/diffusion process</em>는 고정된채로 이를 풀어내는 <em>reverse process</em>만을 학습합니다.</p> <h3 id="forwarddiffusion-process">forward/diffusion process</h3> <p>위에서 언급한 것처럼 고정된 Markov chain을 여러번 거치는 방식으로 수행됩니다.</p> \[\begin{align} q(\mathbf{x}_t|\mathbf{x}_{t-1}) &amp;= \mathcal{N}(\mathbf{x}_t ; \sqrt{1-\beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}), \\ q(\mathbf{x}_{1:T} | \mathbf{x}_0) &amp;= \prod^T_{t=1} q(\mathbf{x}_t|\mathbf{x}_{t-1}) \end{align}\] <p>첫 입력, 원본 이미지 \(\mathbf{x}_0\)를 총 \(T\)번의 Markov chain을 거침으로써 이미지에 노이즈를 부여하게 됩니다. 이 때, \(t\)번의 step을 차근차근 밟아나가면서 \(\mathbf{x}_0\)에서 \(\mathbf{x}_t\)를 만들어 낼 수 있겠지만, 한 번에 이를 만들어 낼 수 있습니다.</p> <p>차근차근 밟아나가며 \(\mathbf{x}_t\)를 생성하는 것은 memory는 물론 computing resource도 많이 소모하는 방법입니다. 저자들은 어차피 stochastic gradient를 사용하기 때문에 \(t\)에 대한 기댓값을 한 번에 계산하는 식으로 구현할 수 있다고 말합니다.</p> \[\begin{align} q(\mathbf{x}_t | \mathbf{x}_0) &amp;= \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\mathbf{\alpha}}_t} \mathbf{x}_0, (1-\bar\alpha_t)\mathbf{I}), \\ \alpha_t &amp;= 1-\beta_t, \bar\alpha_t = \prod^t_{s=1}\alpha_s \end{align}\] <h3 id="reverse-process">Reverse Process</h3> <p>노이즈를 총 \(T\)번 부여한 뒤, 이 결과 \(\mathbf{x}_T\)를 원복하려는 생성 태스크에선 diffusion process의 역 계산인 \(q(\mathbf{x}_{t-1} \mid \mathbf{x}_t)\)를 타겟으로 학습하고자 하는 solution입니다. 따라서, 이 분포를 근사할 수 있는 모델 parameter, \(\theta\)를 학습하는 것이 diffusion model의 주요 idea입니다.</p> \[\begin{align} p_{\theta}(\mathbf{x}_{0:T}) &amp;= p(\mathbf{x}_T) \prod^T_{t=1} p_{\theta}(\mathbf{x}_{t-1} | \mathbf{x}_t), \\ p_{\theta}(\mathbf{x}_{t-1} | \mathbf{x}_t) &amp;= \mathcal{N}(\mathbf{x}_{t-1}; \mu_{\theta}(\mathbf{x}_t, t), \Sigma_{\theta}(\mathbf{x}_t, t)) \end{align}\] <p>위 식에서, 각 \(t\) step에서의 평균 \(\mu_{\theta}\)와 표준편차 \(\Sigma_{\theta}\)는 학습되어야 하는 parameter들 입니다. 다만, 여기의 \(\Sigma_{\theta}\)는 학습 가능한 parameter로 두고 학습할 수 있겠지만 저자들의 경험상 상수로 두고 학습해도 무방하다고 합니다. 이 단계들의 시작점인 \(p(\mathbf{x}_T)=\mathcal{N}(\mathbf{x}_T; \mathbf{0}, \mathbf{I})\)는 충분히 Gaussian Noise가 층층히 쌓인 결과이기 때문에 표준정규분포의 형태로 정의할 수 있습니다.</p> <p><br></p> <hr> <p><br></p> <h2 id="3-diffusion-models-and-denoising-autoencoders">3. Diffusion models and denoising autoencoders</h2> <p>이제 본 논문의 주요 기여점, 위에서 언급한 idea를 어떻게 하나의 loss function으로 정리할 수 있었는지 살펴보겠습니다.</p> \[\mathbb{E}_q[\underbrace{D_{KL}(q(\mathbf{x}_T|\mathbf{x}_0) || p(\mathbf{x}_T))}_{L_T} + \sum_{t&gt;1}\underbrace{D_{KL}(q(\mathbf{x}_{t-1}|\mathbf{x}_t, \mathbf{x}_0) || p_{\theta}(\mathbf{x}_{t-1} | \mathbf{x}_t))}_{L_{t-1}} \underbrace{-\log p_{\theta}(\mathbf{x}_0 | \mathbf{x}_1)}_{L_0}]\] <p>위 최종 loss의 정의는 각 step \(t\)의 변화에 따라 loss term이 어떻게 구성되어 있는지 알 수 있습니다. 전반적인 loss의 구성은 각 step에 따라 <em>forward process</em> \(q\)분포와 <em>reverse process</em> \(p\)분포의 차이를 KL Divergence의 형태로 정의해 두 분포의 차이를 줄이는 컨셉으로 이루어져 있습니다.</p> <h3 id="forward-process-and-loss">Forward process and Loss</h3> <p>여기에서 \(\mathbf{x}_T\)는 항상 Gaussian distribution을 근사하게 됩니다 (\(p(\mathbf{x}_T) = \mathcal{N}(\mathbf{x}_T; \mathbf{0}, \mathbf{I})\)). 따라서 \(q(\mathbf{x}_T \mid \mathbf{x}_0)\)는 사실상 표준정규분포로 빠르게 수렴할 것입니다. 때문에 학습 간 무시해도 되는 loss term입니다.</p> <p>\(L_T\)의 의미를 다시 생각해보면, 아래 두 분포의 차이를 의미하는 것을 알 수 있습니다.</p> <ul> <li>\(p(\mathbf{x}_T)\): 노이즈가 쌓인 \(\mathbf{x}_T\)의 분포</li> <li>\(q(\mathbf{x}_T \mid \mathbf{x}_0)\): \(\mathbf{x}_0\)가 주어졌을 때, \(\mathbf{x}_T\)로 diffusion process가 진행된 후의 분포</li> </ul> <p>따라서 두 분포는 모두 자연스럽게 랜덤한 정규분포일 것이고, 그 차이는 아주 미미할 것입니다.</p> <h3 id="reverse-process-and-loss">Reverse process and Loss</h3> <p>해당 loss term이 DDPM의 핵심 loss term이라고 할 수 있습니다. 그 의미를 생각해보면, \(p\)와 \(q\)의 reverse process 및 forward process 분포 차이를 줄이는 것으로 볼 수 있죠.</p> <p>허나 갑자기 \(L_{t-1}\)에 타겟으로 제공되어야 할 \(q(\mathbf{x}_{t-1} \mid \mathbf{x}_t)\) 대신 \(q(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0)\)가 등장해 상당히 어색합니다. 이는 단일 조건이 주어진 \(q(\mathbf{x}_{t-1} \mid \mathbf{x}_t)\) 분포는 구할 수 없지만, 하나의 조건이 더 주어진 \(q(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0)\) 분포는 Bayes’ rule에 의해 정리되고 추적이 가능하기 때문입니다.</p> \[\begin{align} q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) &amp;= \mathcal{N}(\mathbf{x}_{t-1}; \tilde\mu(\mathbf{x}_t, \mathbf{x}_0), \tilde\beta_t\mathbf{I}) \\ &amp;= q(\mathbf{x}_t | \mathbf{x}_{t-1}, \mathbf{x}_0) \frac{q(\mathbf{x}_{t-1} | \mathbf{x}_0)}{q(\mathbf{x}_t | \mathbf{x}_0)} \\ &amp;= \cdots \\ &amp;\propto \exp \left( -\frac{1}{2} \left( (\frac{\alpha_t}{\beta_t}+\frac{1}{1-\bar\alpha_{t-1}})\mathbf{x}^2_{t-1} - (\frac{2\sqrt{\alpha_t}}{\beta_t}+\frac{2\sqrt{\bar\alpha_{t-1}}}{1-\bar\alpha_{t-1}}\mathbf{x}_0)\mathbf{x}_{t-1} + C(\mathbf{x}_t, \mathbf{x}_0) \right) \right), \\ &amp; \text{where } C(\mathbf{x}_t, \mathbf{x}_0) \text{ is some function not involving } \mathbf{x}_{t-1}. \end{align}\] <p>자세한 수식은 <a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#reverse-diffusion-process" rel="external nofollow noopener" target="_blank">참조 포스팅</a>에서 확인해주시기 바랍니다. 위 수식에서 \(\mathbf{x}_{t-1}\)에 대한 <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution" rel="external nofollow noopener" target="_blank">Gaussian density function의 정의</a>에 의해 \(\mathbf{x}_{t-1}\)에 대한 Gaussian 분포의 평균과 분산을 도출할 수 있게 됩니다.</p> \[\begin{align} \tilde\beta_t &amp;= \frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t} \cdot \beta_t \\ \tilde\mu_t(\mathbf{x}_t, \mathbf{x}_0) &amp;= \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\mathbf{x}_t + \frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\mathbf{x}_0 \end{align}\] <p>다시, <a href="https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick" rel="external nofollow noopener" target="_blank">reparameterization trick</a>에 의해 \(\mathbf{x}_0=\frac{1}{\sqrt{\bar\alpha_t}}(\mathbf{x}_t - \sqrt{1-\bar\alpha_t}\epsilon_t)\) 로 표현할 수 있고, 이를 위 식에 대입해</p> \[\begin{align} \tilde\mu_t = \frac{1}{\sqrt{\alpha_t}}(\mathbf{x}_t - \frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_t), \\ \text{where } \epsilon_t, \epsilon_{t-1}, ... \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \end{align}\] <p>위와 같이 평균을 도출할 수 있습니다.</p> <p>이제 다 왔습니다. 주어진 입력 \(\mathbf{x}_t\)의 분포를 알아냈으니 우리의 모델이 이 \(\mathbf{x}_t\)를 모방할 수 있게 차이를 줄이는 방향으로 학습할 수 있습니다. 위에서 KL Divergence로 표현된 \(L_{t-1}\)를 아래와 같이 쓸 수 있는데요.</p> \[\begin{align} L_{t-1} = \mathbb{E}_q \left[ \frac{1}{2\sigma^2_t} \lVert \color{red}{\tilde\mu_t(\mathbf{x}_t, \mathbf{x}_0)} - \color{cyan}{\mu_\theta(\mathbf{x}_t, t)} \rVert ^2 \right] + C, \\ \text{where } C \text{ is a constant that does not depend on } \theta. \end{align}\] <p>우리가 학습하고자 하는 분포가 \(p_\theta(\mathbf{x}_{t-1} \mid \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1} ; \mu_\theta(\mathbf{x}_t, t), \Sigma_\theta(\mathbf{x}_t, t))\) 임을 생각해보면 학습 단계에서 입력으로 주어지는 \(\mathbf{x}_t\)로부터 \(\tilde\mu_t\)를 추적할 수 있습니다. 따라서, \(\mu_\theta\)를 위 수식을 통해 \(\tilde\mu_t\)와의 차이를 줄이는 방향으로 학습할 수 있게됩니다.</p> <p>이 수식을 우리가 알고있는 정보들을 조합해 학습에 간단한 형태로 바꾸어보겠습니다.</p> \[\begin{align} L_t &amp;= \mathbb{E}_{\mathbf{x}_0, \epsilon} \left[ \frac{1}{2\lVert\Sigma_\theta\rVert_2^2} \lVert \color{red}{\frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_t \right) } - \color{cyan}{\frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\mathbf{x}_t, t) \right)} \rVert^2 \right] \\ &amp;= \mathbb{E}_{\mathbf{x}_0, \epsilon} \left[ \frac{(1-\alpha_t)^2}{2\alpha_t(1-\bar\alpha_t)\lVert\Sigma_\theta\rVert_2^2} \lVert \epsilon_t - \epsilon_\theta(\mathbf{x}_t, t) \rVert^2 \right] \\ &amp;= \mathbb{E}_{\mathbf{x}_0, \epsilon} \left[ \frac{(1-\alpha_t)^2}{2\alpha_t(1-\bar\alpha_t)\lVert\Sigma_\theta\rVert_2^2} \lVert \epsilon_t - \epsilon_\theta(\sqrt{\bar\alpha_t}\mathbf{x}_0 + \sqrt{1-\bar\alpha_t}\epsilon_t, t) \rVert^2 \right] \end{align}\] <p>마지막으로 논문에서는 경험적인 결과로 계수를 제외해도 모델의 수렴에 상관없다고 언급합니다.</p> \[L_t^{\text{simple}} = \mathbb{E}_{t\sim[1,T], \mathbf{x}_0, \epsilon_t} \left[ \lVert \epsilon_t - \epsilon_\theta(\sqrt{\bar\alpha_t}\mathbf{x}_0 + \sqrt{1-\bar\alpha_t}\epsilon_t, t) \rVert \right]\] <p>최종적으로 정리된 학습 알고리즘을 논문에서와 같이 아래로 정리할 수 있습니다.</p> <p><img src="/assets/img/DDPM/fig2.png" alt="image-description"></p> <p><br></p> <hr> <p><br></p> <h2 id="appendix-code-implementation">Appendix. Code Implementation</h2> <p>코드 구현의 리뷰는 아래 repo를 참고 했습니다.</p> <ul> <li><a href="https://github.com/lucidrains/denoising-diffusion-pytorch" rel="external nofollow noopener" target="_blank">pytorch implementation</a></li> </ul> <h3 id="1-training-overview">1) Training Overview</h3> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">denoising_diffusion_pytorch</span> <span class="kn">import</span> <span class="n">Unet</span><span class="p">,</span> <span class="n">GaussianDiffusion</span><span class="p">,</span> <span class="n">Trainer</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="nc">Unet</span><span class="p">(</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="n">dim_mults</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="n">flash_attn</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="p">)</span>
+
+<span class="n">diffusion</span> <span class="o">=</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">image_size</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">timesteps</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>           <span class="c1"># number of steps
+</span>    <span class="n">sampling_timesteps</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>  <span class="c1"># number of sampling timesteps (using ddim for faster inference [see citation for ddim paper])
+</span>    <span class="n">objective</span> <span class="o">=</span> <span class="sh">'</span><span class="s">pred_noise</span><span class="sh">'</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="nc">Trainer</span><span class="p">(</span>
+    <span class="n">diffusion</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">path/to/your/images</span><span class="sh">'</span><span class="p">,</span>
+    <span class="n">train_batch_size</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">train_lr</span> <span class="o">=</span> <span class="mf">8e-5</span><span class="p">,</span>
+    <span class="n">train_num_steps</span> <span class="o">=</span> <span class="mi">700000</span><span class="p">,</span>         <span class="c1"># total training steps
+</span>    <span class="n">gradient_accumulate_every</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>    <span class="c1"># gradient accumulation steps
+</span>    <span class="n">ema_decay</span> <span class="o">=</span> <span class="mf">0.995</span><span class="p">,</span>                <span class="c1"># exponential moving average decay
+</span>    <span class="n">amp</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>                       <span class="c1"># turn on mixed precision
+</span>    <span class="n">calculate_fid</span> <span class="o">=</span> <span class="bp">True</span>              <span class="c1"># whether to calculate fid during training
+</span><span class="p">)</span>
+
+<span class="n">trainer</span><span class="p">.</span><span class="nf">train</span><span class="p">()</span>
+</code></pre></div></div> <h3 id="2-gaussian-diffusion---training">2) Gaussian Diffusion - Training</h3> <h4 id="2-1-initialize">2-1) initialize</h4> <p>먼저 생성자에서 논문에서 정의한 loss term과 sampling의 계산을 위한 여러 사전정보들을 초기화합니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># denoising_diffusion_pytorch/denoising_diffusion_pytorch.py
+# L421
+</span><span class="k">def</span> <span class="nf">linear_beta_schedule</span><span class="p">(</span><span class="n">timesteps</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">
+    linear schedule, proposed in original ddpm paper
+    </span><span class="sh">"""</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">/</span> <span class="n">timesteps</span>
+    <span class="n">beta_start</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="mf">0.0001</span>
+    <span class="n">beta_end</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="mf">0.02</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="p">.</span><span class="nf">linspace</span><span class="p">(</span><span class="n">beta_start</span><span class="p">,</span> <span class="n">beta_end</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">float64</span><span class="p">)</span>
+</code></pre></div></div> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># denoising_diffusion_pytorch/denoising_diffusion_pytorch.py
+# L457
+</span><span class="k">class</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="bp">...</span>
+        <span class="c1"># L489
+</span>        <span class="k">if</span> <span class="n">beta_schedule</span> <span class="o">==</span> <span class="sh">'</span><span class="s">linear</span><span class="sh">'</span><span class="p">:</span>
+            <span class="n">beta_schedule_fn</span> <span class="o">=</span> <span class="n">linear_beta_schedule</span>
+        <span class="k">elif</span> <span class="n">beta_schedule</span> <span class="o">==</span> <span class="sh">'</span><span class="s">cosine</span><span class="sh">'</span><span class="p">:</span>
+            <span class="n">beta_schedule_fn</span> <span class="o">=</span> <span class="n">cosine_beta_schedule</span>
+        <span class="k">elif</span> <span class="n">beta_schedule</span> <span class="o">==</span> <span class="sh">'</span><span class="s">sigmoid</span><span class="sh">'</span><span class="p">:</span>
+            <span class="n">beta_schedule_fn</span> <span class="o">=</span> <span class="n">sigmoid_beta_schedule</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nc">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">unknown beta schedule </span><span class="si">{</span><span class="n">beta_schedule</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="n">betas</span> <span class="o">=</span> <span class="nf">beta_schedule_fn</span><span class="p">(</span><span class="n">timesteps</span><span class="p">,</span> <span class="o">**</span><span class="n">schedule_fn_kwargs</span><span class="p">)</span>
+
+        <span class="n">alphas</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">betas</span>
+        <span class="n">alphas_cumprod</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">cumprod</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">alphas_cumprod_prev</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="nf">pad</span><span class="p">(</span><span class="n">alphas_cumprod</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">value</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
+
+        <span class="n">timesteps</span><span class="p">,</span> <span class="o">=</span> <span class="n">betas</span><span class="p">.</span><span class="n">shape</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">num_timesteps</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">timesteps</span><span class="p">)</span>
+
+        <span class="c1"># sampling related parameters
+</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">sampling_timesteps</span> <span class="o">=</span> <span class="nf">default</span><span class="p">(</span><span class="n">sampling_timesteps</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">)</span> <span class="c1"># default num sampling timesteps to number of timesteps at training
+</span>
+        <span class="k">assert</span> <span class="n">self</span><span class="p">.</span><span class="n">sampling_timesteps</span> <span class="o">&lt;=</span> <span class="n">timesteps</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">is_ddim_sampling</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">sampling_timesteps</span> <span class="o">&lt;</span> <span class="n">timesteps</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">ddim_sampling_eta</span> <span class="o">=</span> <span class="n">ddim_sampling_eta</span>
+
+        <span class="c1"># helper function to register buffer from float64 to float32
+</span>
+        <span class="n">register_buffer</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">self</span><span class="p">.</span><span class="nf">register_buffer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">float32</span><span class="p">))</span>
+
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">betas</span><span class="sh">'</span><span class="p">,</span> <span class="n">betas</span><span class="p">)</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">alphas_cumprod</span><span class="sh">'</span><span class="p">,</span> <span class="n">alphas_cumprod</span><span class="p">)</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">alphas_cumprod_prev</span><span class="sh">'</span><span class="p">,</span> <span class="n">alphas_cumprod_prev</span><span class="p">)</span>
+
+        <span class="c1"># calculations for diffusion q(x_t | x_{t-1}) and others
+</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">sqrt_alphas_cumprod</span><span class="sh">'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">alphas_cumprod</span><span class="p">))</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">sqrt_one_minus_alphas_cumprod</span><span class="sh">'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod</span><span class="p">))</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">log_one_minus_alphas_cumprod</span><span class="sh">'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod</span><span class="p">))</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">sqrt_recip_alphas_cumprod</span><span class="sh">'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">alphas_cumprod</span><span class="p">))</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">sqrt_recipm1_alphas_cumprod</span><span class="sh">'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">alphas_cumprod</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># calculations for posterior q(x_{t-1} | x_t, x_0)
+</span>
+        <span class="n">posterior_variance</span> <span class="o">=</span> <span class="n">betas</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod_prev</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod</span><span class="p">)</span>
+
+        <span class="c1"># above: equal to 1. / (1. / (1. - alpha_cumprod_tm1) + alpha_t / beta_t)
+</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">posterior_variance</span><span class="sh">'</span><span class="p">,</span> <span class="n">posterior_variance</span><span class="p">)</span>
+
+        <span class="c1"># below: log calculation clipped because the posterior variance is 0 at the beginning of the diffusion chain
+</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">posterior_log_variance_clipped</span><span class="sh">'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">posterior_variance</span><span class="p">.</span><span class="nf">clamp</span><span class="p">(</span><span class="nb">min</span> <span class="o">=</span><span class="mf">1e-20</span><span class="p">)))</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">posterior_mean_coef1</span><span class="sh">'</span><span class="p">,</span> <span class="n">betas</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">alphas_cumprod_prev</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod</span><span class="p">))</span>
+        <span class="nf">register_buffer</span><span class="p">(</span><span class="sh">'</span><span class="s">posterior_mean_coef2</span><span class="sh">'</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod_prev</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">alphas</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alphas_cumprod</span><span class="p">))</span>
+</code></pre></div></div> <ul> <li> <code class="language-plaintext highlighter-rouge">betas</code> = \(\beta_t\) <ul> <li> <code class="language-plaintext highlighter-rouge">alphas</code> = \(\alpha_t = 1 - \beta_t\)</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">alphas_cumprod</code> = \(\bar\alpha_t = \prod_{i=1}^t \alpha_i\)</li> <li> <p><code class="language-plaintext highlighter-rouge">alphas_cumprod_prev</code> = \(\bar\alpha_{t-1} = \prod_{i=1}^{t-1} \alpha_i\)</p> </li> <li> <code class="language-plaintext highlighter-rouge">posterior_variance</code> = \(\tilde\beta_t = \frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\cdot\beta_t\)</li> <li>posterior_mean <ul> <li> <code class="language-plaintext highlighter-rouge">posterior_mean_coef1</code> = \(\frac{\sqrt{\bar\alpha_{t-1}\beta_t}}{1-\bar\alpha_t}\)</li> <li> <code class="language-plaintext highlighter-rouge">posterior_mean_coef2</code> = \(\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\)</li> </ul> </li> </ul> <p>정의는 <a href="./#reverse-process-and-loss">본문</a>에서 참고</p> <h4 id="2-2-forward-function">2-2) forward function</h4> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># L457
+</span><span class="k">class</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="bp">...</span>
+    <span class="c1"># L796
+</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">img_size</span><span class="p">,</span> <span class="o">=</span> <span class="o">*</span><span class="n">img</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">device</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">image_size</span>
+        <span class="k">assert</span> <span class="n">h</span> <span class="o">==</span> <span class="n">img_size</span> <span class="ow">and</span> <span class="n">w</span> <span class="o">==</span> <span class="n">img_size</span><span class="p">,</span> <span class="sa">f</span><span class="sh">'</span><span class="s">height and width of image must be </span><span class="si">{</span><span class="n">img_size</span><span class="si">}</span><span class="sh">'</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">num_timesteps</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">).</span><span class="nf">long</span><span class="p">()</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">normalize</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">p_losses</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div></div> <p>diffusion의 학습을 시작하면 <code class="language-plaintext highlighter-rouge">GaussianDiffusion</code> 인스턴스의 <code class="language-plaintext highlighter-rouge">forward</code> method가 실행됩니다. 여기에서 diffusion process의 time step \(t\)를 샘플링하게 됩니다. 이 경우엔 <code class="language-plaintext highlighter-rouge">self.num_timesteps=100</code>로 설정했고, batch_size는 <code class="language-plaintext highlighter-rouge">32</code>로, 총 32개의 [0, 99] 범위의 랜덤한 \(t\)를 생성할 것입니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">t</span> <span class="o">=</span> <span class="nf">tensor</span><span class="p">([</span> <span class="mi">6</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> 
+            <span class="mi">11</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> 
+            <span class="mi">4</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> 
+            <span class="mi">93</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">63</span><span class="p">],</span>
+            <span class="n">device</span><span class="o">=</span><span class="sh">'</span><span class="s">cuda:0</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div> <h4 id="2-3-method---p_losses">2-3) method - p_losses</h4> <p>이후 발전된 형태의 수식 구현코드들이 여럿 포함되어 있지만, 이를 제외하고 원조 DDPM의 구현코드(<code class="language-plaintext highlighter-rouge">self.objective == 'pred_noise'</code>)만 표현하면 아래와 같습니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># L457
+</span><span class="k">class</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="bp">...</span>
+    <span class="c1"># L741
+</span>    <span class="k">def</span> <span class="nf">q_sample</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x_start</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="nf">default</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="nf">randn_like</span><span class="p">(</span><span class="n">x_start</span><span class="p">))</span>
+
+        <span class="nf">return </span><span class="p">(</span>
+            <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">sqrt_alphas_cumprod</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_start</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_start</span> <span class="o">+</span>
+            <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">sqrt_one_minus_alphas_cumprod</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_start</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise</span>
+        <span class="p">)</span>
+
+    <span class="bp">...</span>
+
+    <span class="c1"># L749
+</span>    <span class="k">def</span> <span class="nf">p_losses</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x_start</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">offset_noise_strength</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">x_start</span><span class="p">.</span><span class="n">shape</span>
+
+        <span class="n">noise</span> <span class="o">=</span> <span class="nf">default</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="nf">randn_like</span><span class="p">(</span><span class="n">x_start</span><span class="p">))</span>
+
+        <span class="c1"># noise sample
+</span>        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">q_sample</span><span class="p">(</span><span class="n">x_start</span> <span class="o">=</span> <span class="n">x_start</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">)</span>
+
+        <span class="c1"># predict and take gradient step
+</span>        <span class="n">model_out</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="n">noise</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="nf">mse_loss</span><span class="p">(</span><span class="n">model_out</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">reduction</span> <span class="o">=</span> <span class="sh">'</span><span class="s">none</span><span class="sh">'</span><span class="p">)</span>
+
+    <span class="bp">...</span>
+</code></pre></div></div> <p>먼저, <code class="language-plaintext highlighter-rouge">noise</code>와 <code class="language-plaintext highlighter-rouge">x_start</code>(\(\mathbf{x}_0\))를 통해 \(t\) 시점에서의 posterior를 <code class="language-plaintext highlighter-rouge">self.q_sample</code> method를 통해 샘플링합니다.</p> <p>잘 살펴보면 <code class="language-plaintext highlighter-rouge">self.q_sample</code> method의 정의는 <a href="./#reverse-process-and-loss">본문</a>의 <em>Algorithm 1</em>의 다섯번째 줄 \(\epsilon_\theta(\sqrt{\bar\alpha_t}\mathbf{x}_0 + \sqrt{1-\bar\alpha_t}\epsilon, t)\)의 수식과 같다는 것을 알 수 있습니다.</p> <p>마지막으로 샘플링한 것을 <code class="language-plaintext highlighter-rouge">noise</code>(\(\mathbf{\epsilon}\))와의 MSE(Mean Squared Error)를 구하는 것을 loss로 정의할 수 있습니다.</p> <h3 id="3-generating-overview">3) Generating Overview</h3> <p>생성 과정은 아래의 예시와 같이 <code class="language-plaintext highlighter-rouge">self.sample</code> method를 수행하며 진행됩니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sampled_images</span> <span class="o">=</span> <span class="n">diffusion</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">sampled_images</span><span class="p">.</span><span class="n">shape</span> <span class="c1"># (4, 3, 32, 32)
+</span></code></pre></div></div> <h3 id="4-gaussian-diffusion---generating">4) Gaussian Diffusion - Generating</h3> <h4 id="4-1-method---sample">4-1) method - sample</h4> <p>발전된 형태인 DDIM의 구현(<code class="language-plaintext highlighter-rouge">self.ddim_sample</code>)을 제외하고, 구현코드를 보면 \(T\) (<code class="language-plaintext highlighter-rouge">self.num_timesteps</code>)부터 0까지 \(t\)(<code class="language-plaintext highlighter-rouge">t</code>)를 차례차례 밟아가며 <code class="language-plaintext highlighter-rouge">self.p_sample</code> method를 수행하는 구조를 띄고 있습니다.</p> <p>따라서 <code class="language-plaintext highlighter-rouge">self.p_sample</code> 메서드의 인자 <code class="language-plaintext highlighter-rouge">t</code>는 99부터 시작해 0까지 총 100(\(=T\))번 실행되며, 100번 이미지를 생성해낼 겁니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># L457
+</span><span class="k">class</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="bp">...</span>
+    <span class="c1"># L654
+</span>    <span class="k">def</span> <span class="nf">p_sample_loop</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">return_all_timesteps</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">batch</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">self</span><span class="p">.</span><span class="n">device</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">device</span><span class="p">)</span>
+        <span class="n">imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="p">]</span>
+
+        <span class="n">x_start</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nf">tqdm</span><span class="p">(</span><span class="nf">reversed</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">num_timesteps</span><span class="p">)),</span> <span class="n">desc</span> <span class="o">=</span> <span class="sh">'</span><span class="s">sampling loop time step</span><span class="sh">'</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">num_timesteps</span><span class="p">):</span>
+            <span class="n">self_cond</span> <span class="o">=</span> <span class="n">x_start</span> <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">self_condition</span> <span class="k">else</span> <span class="bp">None</span>
+            <span class="n">img</span><span class="p">,</span> <span class="n">x_start</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">p_sample</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">self_cond</span><span class="p">)</span>
+            <span class="n">imgs</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">img</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">return_all_timesteps</span> <span class="k">else</span> <span class="n">torch</span><span class="p">.</span><span class="nf">stack</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">unnormalize</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="bp">...</span>
+
+    <span class="c1"># L715
+</span>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">return_all_timesteps</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">image_size</span><span class="p">,</span> <span class="n">channels</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">image_size</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">channels</span>
+        <span class="n">sample_fn</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">p_sample_loop</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">is_ddim_sampling</span> <span class="k">else</span> <span class="n">self</span><span class="p">.</span><span class="n">ddim_sample</span>
+        <span class="k">return</span> <span class="nf">sample_fn</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">image_size</span><span class="p">,</span> <span class="n">image_size</span><span class="p">),</span> <span class="n">return_all_timesteps</span> <span class="o">=</span> <span class="n">return_all_timesteps</span><span class="p">)</span>
+</code></pre></div></div> <p>이 과정 역시 <a href="./#reverse-process-and-loss">본문</a>의 <em>Algorithm 2</em>의 전체적인 프로세스 정의와 같음을 확인할 수 있었습니다.</p> <p>그렇다면 <code class="language-plaintext highlighter-rouge">self.p_sample</code> method의 정의를 살펴보겠습니다.</p> <h4 id="4-2-method---p_sample">4-2) method - p_sample</h4> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># L35
+</span><span class="n">ModelPrediction</span> <span class="o">=</span>  <span class="nf">namedtuple</span><span class="p">(</span><span class="sh">'</span><span class="s">ModelPrediction</span><span class="sh">'</span><span class="p">,</span> <span class="p">[</span><span class="sh">'</span><span class="s">pred_noise</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">pred_x_start</span><span class="sh">'</span><span class="p">])</span>
+
+<span class="bp">...</span>
+
+<span class="c1"># L457
+</span><span class="k">class</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="bp">...</span>
+
+    <span class="c1"># L600
+</span>    <span class="k">def</span> <span class="nf">q_posterior</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x_start</span><span class="p">,</span> <span class="n">x_t</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="n">posterior_mean</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">posterior_mean_coef1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_start</span> <span class="o">+</span>
+            <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">posterior_mean_coef2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_t</span>
+        <span class="p">)</span>
+        <span class="n">posterior_variance</span> <span class="o">=</span> <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">posterior_variance</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">posterior_log_variance_clipped</span> <span class="o">=</span> <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">posterior_log_variance_clipped</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">posterior_mean</span><span class="p">,</span> <span class="n">posterior_variance</span><span class="p">,</span> <span class="n">posterior_log_variance_clipped</span>
+
+    <span class="bp">...</span>
+
+    <span class="c1"># L609
+</span>    <span class="k">def</span> <span class="nf">model_predictions</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_self_cond</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">clip_x_start</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">rederive_pred_noise</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">model_output</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_self_cond</span><span class="p">)</span>
+        <span class="n">maybe_clip</span> <span class="o">=</span> <span class="nf">partial</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">clamp</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="nb">max</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="k">if</span> <span class="n">clip_x_start</span> <span class="k">else</span> <span class="n">identity</span>
+
+        <span class="n">pred_noise</span> <span class="o">=</span> <span class="n">model_output</span>
+        <span class="n">x_start</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">predict_start_from_noise</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">pred_noise</span><span class="p">)</span>
+        <span class="n">x_start</span> <span class="o">=</span> <span class="nf">maybe_clip</span><span class="p">(</span><span class="n">x_start</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">clip_x_start</span> <span class="ow">and</span> <span class="n">rederive_pred_noise</span><span class="p">:</span>
+            <span class="n">pred_noise</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">predict_noise_from_start</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_start</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nc">ModelPrediction</span><span class="p">(</span><span class="n">pred_noise</span><span class="p">,</span> <span class="n">x_start</span><span class="p">)</span>
+    
+
+    <span class="bp">...</span>
+    
+    <span class="c1"># L634
+</span>    <span class="k">def</span> <span class="nf">p_mean_variance</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_self_cond</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">clip_denoised</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">model_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_self_cond</span><span class="p">)</span>
+        <span class="n">x_start</span> <span class="o">=</span> <span class="n">preds</span><span class="p">.</span><span class="n">pred_x_start</span>
+
+        <span class="k">if</span> <span class="n">clip_denoised</span><span class="p">:</span>
+            <span class="n">x_start</span><span class="p">.</span><span class="nf">clamp_</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+
+        <span class="n">model_mean</span><span class="p">,</span> <span class="n">posterior_variance</span><span class="p">,</span> <span class="n">posterior_log_variance</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">q_posterior</span><span class="p">(</span><span class="n">x_start</span> <span class="o">=</span> <span class="n">x_start</span><span class="p">,</span> <span class="n">x_t</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model_mean</span><span class="p">,</span> <span class="n">posterior_variance</span><span class="p">,</span> <span class="n">posterior_log_variance</span><span class="p">,</span> <span class="n">x_start</span>
+
+    <span class="bp">...</span>
+
+    <span class="c1"># L645
+</span>    <span class="k">def</span> <span class="nf">p_sample</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">x_self_cond</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="o">*</span><span class="n">x</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">device</span>
+        <span class="n">batched_times</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">full</span><span class="p">((</span><span class="n">b</span><span class="p">,),</span> <span class="n">t</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">device</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">long</span><span class="p">)</span>
+        <span class="n">model_mean</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">model_log_variance</span><span class="p">,</span> <span class="n">x_start</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">p_mean_variance</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">batched_times</span><span class="p">,</span> <span class="n">x_self_cond</span> <span class="o">=</span> <span class="n">x_self_cond</span><span class="p">,</span> <span class="n">clip_denoised</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">randn_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.</span> <span class="c1"># no noise if t == 0
+</span>        <span class="n">pred_img</span> <span class="o">=</span> <span class="n">model_mean</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">model_log_variance</span><span class="p">).</span><span class="nf">exp</span><span class="p">()</span> <span class="o">*</span> <span class="n">noise</span>
+        <span class="k">return</span> <span class="n">pred_img</span><span class="p">,</span> <span class="n">x_start</span>
+</code></pre></div></div> <p>먼저, <code class="language-plaintext highlighter-rouge">self.p_sample</code> method의 마지막 줄에서 <code class="language-plaintext highlighter-rouge">x_start</code> 변수는 역시 <a href="./#reverse-process-and-loss">본문</a>의 <em>Algorithm 2</em>의 의 것과 동일한 형태로 구현되어 있습니다. <code class="language-plaintext highlighter-rouge">x_start</code> 변수를 추적하다보면 아래의 <code class="language-plaintext highlighter-rouge">self.predict_start_from_noise</code> method에서 도출되는 것을 확인할 수 있는데요, 이 계산식이 <a href="./#reverse-process-and-loss">본문</a>의 <em>Algorithm 2</em>의 네 번째 줄의 것과 동일한 것을 확인할 수 있었습니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># L457
+</span><span class="k">class</span> <span class="nc">GaussianDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="bp">...</span>
+    <span class="c1"># L576
+</span>    <span class="k">def</span> <span class="nf">predict_start_from_noise</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x_t</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">noise</span><span class="p">):</span>
+        <span class="nf">return </span><span class="p">(</span>
+            <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">sqrt_recip_alphas_cumprod</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_t</span> <span class="o">-</span>
+            <span class="nf">extract</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">sqrt_recipm1_alphas_cumprod</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise</span>
+        <span class="p">)</span>
+</code></pre></div></div> <p>그렇다면 실제 생성될 이미지인 <code class="language-plaintext highlighter-rouge">pred_img</code> 변수는 어떻게 구성될까요?</p> <p><code class="language-plaintext highlighter-rouge">pred_img</code>를 구성하는 <code class="language-plaintext highlighter-rouge">model_mean</code>과 <code class="language-plaintext highlighter-rouge">model_log_variance</code> 변수를 추적하다보면, 두 변수 모두 <code class="language-plaintext highlighter-rouge">self.q_posterior</code> method에서 도출되는 것을 확인할 수 있습니다.</p> <p>그 계산 결과는 diffusion model의 reverse process를 지속적으로 학습하며 추적이 가능해진 <code class="language-plaintext highlighter-rouge">posterior</code> 분포를 구성하는 과정으로 보여집니다. 다시 말해, 본문에서 언급한 아래의 평균과 분산으로 분포를 구성해 이미지를 생성함을 알 수 있죠.</p> <ul> <li> <code class="language-plaintext highlighter-rouge">posterior_variance</code> = \(\tilde\beta_t = \frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\cdot\beta_t\)</li> <li>posterior_mean <ul> <li> <code class="language-plaintext highlighter-rouge">posterior_mean_coef1</code> = \(\frac{\sqrt{\bar\alpha_{t-1}\beta_t}}{1-\bar\alpha_t}\)</li> <li> <code class="language-plaintext highlighter-rouge">posterior_mean_coef2</code> = \(\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\)</li> </ul> </li> </ul> \[\begin{align} \tilde\beta_t &amp;= \frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t} \cdot \beta_t \\ \tilde\mu_t(\mathbf{x}_t, \mathbf{x}_0) &amp;= \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\mathbf{x}_t + \frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\mathbf{x}_0 \end{align}\] <p><br></p> <hr> <p><br></p> <blockquote> <p>References</p> <ul> <li><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models" rel="external nofollow noopener" target="_blank">https://lilianweng.github.io/posts/2021-07-11-diffusion-models</a></li> <li><a href="https://happy-jihye.github.io/diffusion/diffusion-1/" rel="external nofollow noopener" target="_blank">https://happy-jihye.github.io/diffusion/diffusion-1/</a></li> <li><a href="https://process-mining.tistory.com/188" rel="external nofollow noopener" target="_blank">https://process-mining.tistory.com/188</a></li> <li><a href="https://github.com/lucidrains/denoising-diffusion-pytorch" rel="external nofollow noopener" target="_blank">pytorch implementation</a></li> </ul> </blockquote> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

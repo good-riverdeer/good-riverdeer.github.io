@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2021/swin-transformer/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows</h1> <p class="post-meta"> Created on August 27, 2021 </p> <p class="post-tags"> <a href="/blog/2021"> <i class="fa-solid fa-calendar fa-sm"></i> 2021 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/vision-transformer"> <i class="fa-solid fa-hashtag fa-sm"></i> vision_transformer</a>   <a href="/blog/tag/vit"> <i class="fa-solid fa-hashtag fa-sm"></i> ViT</a>   <a href="/blog/tag/self-attention"> <i class="fa-solid fa-hashtag fa-sm"></i> self-attention</a>   <a href="/blog/tag/transformer"> <i class="fa-solid fa-hashtag fa-sm"></i> transformer</a>   <a href="/blog/tag/swin-transformer"> <i class="fa-solid fa-hashtag fa-sm"></i> swin_transformer</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/computer-vision"> <i class="fa-solid fa-tag fa-sm"></i> Computer Vision</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://arxiv.org/abs/2103.14030" rel="external nofollow noopener" target="_blank">Liu, Z., Lin, Y., Cao, Y., Hu, H., Wei, Y., Zhang, Z., … &amp; Guo, B. (2021). Swin transformer: Hierarchical vision transformer using shifted windows. <em>arXiv preprint arXiv:2103.14030.</em></a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. 올바르지 못한 내용에 대한 피드백을 환영합니다 :)</em></p> <hr> <h2 id="1-introduction">1. Introduction</h2> <p>본 논문에서는 <strong>Transformer</strong>의 Computer Vision 분야로의 확장 가능성에 대한 연구를 진행했으며 Computer Vision에서의 general purpose backbone으로 사용될 수 있도록 하려했다.</p> <p><strong>[@ Scale]</strong> 언어 modality와 비전 modality 간의 차이 중 하나는 <strong>Scale</strong>의 포함 여부이다. 언어 태스크에서 활용되었던 Transformer가 언어를 처리함에 있어 가장 기본적인 단위인 단어 토큰과 다르게 시각적 요소는 크기가 다양하게 출현하게 된다. 이 점은 기존 Object detection과 같은 태스크에서 주된 연구 주제이기도 했다. 현존하는 Transformer 기반의 모델들은 모두 고정된 scale의 토큰들을 가지고 있으며 이는 vision task에 적합하지 않은 특성이다.</p> <p><strong>[@ Resolution &amp; Computation complexity]</strong> 또 하나의 차이점은 텍스트 구절에 비해 이미지의 픽셀 해상도(데이터 밀집도)가 훨씬 높다는 점이다. 픽셀 수준에서 고밀도 예측(dense predictions)이 필요한 semantic segmentation과 같은 vision task에서는 Self-attention의 계산 복잡성이 이미지 크기에 따라 제곱으로 증가하기 때문에 고해상도 이미지에서는 Transformer의 사용이 어렵다.</p> <p><strong>[@ Swin Transformer]</strong></p> <ul> <li>Scale <ul> <li>아래 <strong>그림 1(a)</strong>에서처럼 Swin Transformer는 작은 크기의 패치(patch)에서 시작해 점차 더 모델이 깊어질수록 인점한 패치들을 병합하며 계층적인 특징표현(hierarchical representation)을 구성할 수 있게 된다.</li> <li>Swin Transformer의 이러한 특성으로 인해 기존 Computer vision community에서 주로 사용되던 Object detection이나 Semantic segmentation과 같은 advanced task에도 backbone으로써 사용될 수 있다.</li> </ul> </li> <li>Resolution &amp; Computation complexity <ul> <li>Swin Transformer에서는 이미지를 분할하여 그 분할한 window에 대해서만 Self-attention을 계산하게 된다.</li> <li>따라서 window 크기를 한 번 지정하면 이미지가 늘어남에 따라 window 내부의 패치 수는 고정되며 따라서 계산복잡도는 이미지 크기에 대해 window 수에 따라서 선형적으로만 증가하게 된다.</li> <li>이 점은 기존 Vision Transformer가 이미지 크기에 대해 제곱으로 증가하는 것과 대비된다.</li> </ul> </li> </ul> <p><img src="https://images.velog.io/images/riverdeer/post/a2a16ec2-e7b8-4caf-8a78-fefbb1b132c7/image.png" alt="img-description" width="500"> <em>논문에서 제안하는 계층적 feature의 구성, 이로 인해 기존 CNN이 그러하였듯이 다른 vision task의 backbone으로써 사용될 수 있다.</em></p> <p><br></p> <hr> <p><br></p> <h2 id="3-method">3. Method</h2> <h3 id="31-overall-architecture">3.1 Overall Architecture</h3> <p><img src="https://images.velog.io/images/riverdeer/post/fa533bcd-7e60-4c06-a074-4e463c64afe5/image.png" alt="img-description"> <em>Swin Transformer의 구조</em></p> <p><strong>[@ Patch Partition, Patch Splitting Module]</strong> (Vision Transformer와 같이) 입력되는 RGB 이미지를 서로서로 겹치지 않도록 patch로 분할하고 각 patch를 1차원으로 펼친다(flatten). 논문에서는 각 patch의 크기를 \(4\times 4\)로 사용했으며 따라서 펼친 1차원 patch는 \(4\times 4 \times 3(\mathrm{RGB})=48\) 차원을 가진다.</p> <p><img src="https://images.velog.io/images/riverdeer/post/ea540599-f1da-4688-bfec-f584cf2bd9d1/image.png" alt="img-description" width="500"> <em>입력 이미지를 patch를 sequence 형태로 펼치는 과정</em></p> <p><br></p> <p><strong>[@ Stage 1]</strong></p> <ol> <li>먼저 Linear Embedding을 거쳐 \(C\)차원으로 사영(projection)된다. <ul> <li> \[{H\over 4} \times {W\over 4} \times 48 \rightarrow {H\over 4} \times {W\over 4} \times C\] </li> <li>이렇게 만들어진 \(({H\over 4} \times {W\over 4})\)개의 \(C\)차원 벡터들은 Transformer에서의 “token”으로써 사용된다.</li> </ul> </li> <li>각 token들은 일정 갯수의 Transformer block을 통과한다.</li> </ol> <p><br></p> <p><strong>[@ Stage 2]</strong></p> <p>여기에서는 hierarchical한 feature map을 생성하기 위해 patch의 크기를 조정하게 된다.</p> <ol> <li> <strong>patch merging layer</strong>를 통과하여 서로서로 인접한 \((2\times 2)=4\)개의 patch들끼리 결합하여 하나의 큰 patch를 새롭게 만든다. <ul> <li>아래는 <strong>patch merging layer</strong>의 계산 과정을 시각화한 것이다.</li> <li>인접한 \((2\times 2)=4\)개의 patch들을 concatenate하는 과정에서 차원이 \(4C\)로 늘어나기 때문에 linear layer를 통과하여 \(2C\)로 조정한다.</li> </ul> </li> <li> <strong>Stage 1</strong>에서와 같이 일정 갯수의 Transformer block을 통과한다. <ul> <li>Output: \({H\over 8} \times {W\over 8} \times 2C\)</li> </ul> </li> </ol> <p><img src="https://images.velog.io/images/riverdeer/post/854b30b4-bf9f-4144-bd15-9d372c404012/image.png" alt="img-description" width="500"> <em>patch merging</em></p> <p><br></p> <p><strong>[@ Stage 3 &amp; 4]</strong></p> <p><strong>Stage 2</strong>와 같은 방식으로 점차 patch size는 커지고 patch의 수는 많아지며 각 flattened patch(=token)의 차원은 두 배씩 늘어간다.</p> <ul> <li> <strong>Stage 3</strong>: \({H\over 16} \times {W\over 16} \times 4C\)</li> <li> <strong>Stage 4</strong>: \({H\over 32} \times {W\over 32} \times 8C\)</li> <li>각 Stage에서의 Output은 기존 computer vision task에서 많이 사용되는 형태의 feature map으로 활용될 수 있게된다.</li> </ul> <p><br></p> <p><strong>[@ Swin Transformer Block]</strong></p> <p>각 <strong>Stage</strong>들은 Swin Transformer Block들을 여러 차례 거치게 된다. Swin Transformer block들은 아래와 같이 구성된다. block 내부의 각 요소들에 대한 설명은 <strong>Section 3.2</strong>에서 설명하고 있다.</p> <p><img src="https://images.velog.io/images/riverdeer/post/0533d0f8-90f2-445a-b484-b99c62e84151/image.png" alt="img-description" width="400"> <em>Swin Transformer block</em></p> \[\hat{\mathbf z}^l = \text{W-MSA}(\text{LN}(\mathbf z^{l-1})) + \mathbf z^{l-1},\] \[\mathbf z^l = \text{MLP}(\text{LN}(\hat{\mathbf z}^l)) + \hat{\mathbf z}^l,\] \[\hat{\mathbf z}^{l+1} = \text{SW-MSA}(\text{LN}(\mathbf z^l)) + \mathbf z^l,\] \[\mathbf z^{l+1} = \text{MLP} (\text{LN}(\hat{\mathbf z}^{l+1})) + \hat{\mathbf z}^{l+1}\] \[l = 1 ... L\] <p><br><br></p> <h3 id="32-shifted-window-based-self-attention">3.2 Shifted Window based Self-Attention</h3> <p><strong>[@ 기존 Vision Transformers의 한계]</strong></p> <p>Image Classification에 활용된 기존 Transformer 아키텍처와 그 변형들은 토큰과 모든 토큰 사이의 관계를 계산하는 global self-attention을 적용했다. 하지만 이 방법은 계산 복잡도가 입력 이미지 해상도에 대해서 제곱으로 증가하게 되고 dense한 예측이나 높은 해상도의 이미지에 적용하기에는 어려움이 있다.</p> <p><br></p> <p><strong>[@ Self-attention in non-overlapped windows]</strong></p> <p>논문에서는 위에서 제시한 한계 때문에 효율적인 모델링을 위해 window들 내부에서만 self-attention을 계산하는 것을 제안한다. \(M\times M\)개의 패치들로 window가 구성되어 있다고 생각하면 아래와 같이 계산복잡도를 나타낼 수 있다.</p> \[\Omega(\text{MSA}) = 4hwC^2 + 2(hw)^2C,\] \[\Omega(\text{W-MSA}) = 4hwC^2 + 2M^2hwC\] <p>기존 MSA 모듈에서 패치 내부의 해상도 \(hw\)에 제곱으로 증가하는 반면 W-MSA 모듈에서는 패치 내부에서만 계산이 발생하기 때문에 한 window 내부의 패치의 수 \(M \times M\)에 따라 증가한다.</p> <p><br></p> <p><strong>[@ Shifted window partitioning in successive blocks]</strong></p> <p>위에서 언급한 W-MSA(window-based self-attention) 모듈은 window간의 연결성이 부족하고, 이는 모델링 성능을 저해시키는 요소이다. 논문에서는 연산의 효율을 유지하면서도 window들 간의 연결성을 반영할 수 있는 <strong>shifted window partitioning</strong> 방법을 제안한다.</p> <p><img src="https://images.velog.io/images/riverdeer/post/50307402-bfdb-40bd-b662-988047885f98/image.png" alt="img-description" width="500"> <em>Shifted window partitioning</em></p> <p><strong>그림 2</strong>의 좌측은 W-MSA 모듈의 window 분할 방식, SW-MSA 모듈의 window 분할 방식이다.</p> <ul> <li>W-MSA <ul> <li>\(8\times 8\) feature map을 \(2\times 2 = 4\)개의 window로 나누면 그림과 같이 \(4\times 4(M=4)\) 크기의 window들로 구성되게 된다.</li> </ul> </li> <li>SW-MSA <ul> <li>W-MSA 모듈에서 분할이 발생한 패치에서 \(\left( \lfloor {M \over 2} \rfloor, \lfloor {M \over 2} \rfloor \right)\)칸 떨어진 패치에서 window 분할이 발생</li> <li> <strong>그림 2</strong>의 예시에선, \(\left( \lfloor {M \over 2} \rfloor, \lfloor {M \over 2} \rfloor \right) = (2, 2)\).</li> </ul> </li> </ul> <p><br></p> <p><strong>[@ Efficient batch computation for shifted configuration]</strong></p> <p>SW-MSA 모듈을 실제로 적용함에 있어 생각해야할 점이 존재한다.</p> <ul> <li>먼저 SW-MSA 모듈에서처럼 window를 나누게 되면 window의 수가 늘어나게 된다. W-MSA에서 \(\lceil {h \over M} \rceil \times \lceil {w \over M} \rceil (=2\times 2)\) 였던 window 수가 SW-MSA 모듈에서는 \((\lceil {h \over M} \rceil + 1) \times (\lceil {w \over M} \rceil + 1) (=3\times 3)\)으로 늘어난다.</li> <li>또한 일부 window들은 \(M\times M\)보다 작아지게 된다.</li> </ul> <p>논문에서는 이를 위한 두 가지 방법을 제시한다.</p> <ul> <li>Naive solution <ul> <li>작아진 window들에 padding을 두어 \(M\times M\) 사이즈로 만드는 방법</li> <li>window의 수는 여전히 늘어나게되고 그렇게 되면 W-MSA 모듈의 window 수, \(\lceil {h \over M} \rceil \times \lceil {w \over M} \rceil (=2\times 2)\)와 SW-MSA 모듈에서의 window 수, \((\lceil {h \over M} \rceil + 1) \times (\lceil {w \over M} \rceil + 1) (=3\times 3)\)로 달라지게 된다.</li> <li>따라서 이 방법은 계산복잡도 상으로도, 효율 면으로도 적절하지 않다.</li> </ul> </li> <li>Cyclic-shifting <ul> <li>좌상단(top-left) 패치들부터 <strong>그림 4</strong>처럼 패치를 옮겨 \(M\times M\) 크기로 만든다.</li> <li>이렇게 패치를 새롭게 구성하면 여러 window들이 인접하지 않는 패치들과 인접하게 되므로 이를 분리할 수 있는 계산을 적용해야 한다.</li> <li>논문에서는 여기에 마스킹 메커니즘(masking mechanism)을 통해 이를 분리한다. <ul> <li>예를 들어 <strong>A</strong> window에 속하는 패치에 대한 self-attention을 계산할 때 <strong>B</strong> window에 속하는 패치들에는 마스킹을 적용하는 방식이다.</li> </ul> </li> <li>이 방법을 통해 window들의 크기, 갯수를 W-MSA 모듈에서의 것과 동일하게 유지할 수 있으며 효율적인 방법이다.</li> </ul> </li> </ul> <p><img src="https://images.velog.io/images/riverdeer/post/f73d9243-c902-4f9a-9d64-c073027086ee/image.png" alt="img-description"> <em>cyclic shift</em></p> <p><br></p> <p><strong>[@ Relative position bias]</strong> Self-attention을 계산하는 과정에서 Relative position bias \(B \in \mathbb R^{M^2 \times M^2}\)를 더함으로써 위치적 정보를 모델링할 수 있도록 했다. 이 bias는 window 내부에서의 위치를 모델링하는 것이다. \(\text{Attention}(Q, K, V) = \text{SoftMax}(QK^T/\sqrt d + B)V,\) \(Q, K, V \in \mathbb R^{M^2 \times d}, d= \text{dimension \space of \space} query/key\)</p> <p><a href="https://arxiv.org/pdf/2010.11929.pdf" rel="external nofollow noopener" target="_blank">Vision Transformer</a>에서 사용했던 position embedding(Absolute position embedding: 모든 패치의 위치에 따른 임베딩)을 사용했을 때 위에서 제시한 relative position bias를 사용했을 때보다 오히려 성능이 저하되는 것을 관찰했다.</p> <p><br><br></p> <h3 id="33-architecture-variants">3.3 Architecture Variants</h3> <ul> <li> <strong>Swin-T</strong>: \(C=96\), layer numbers \(=\{2, 2, 6, 2\}\)</li> <li> <strong>Swin-S</strong>: \(C=96\), layer numbers \(=\{2, 2, 18, 2\}\)</li> <li> <strong>Swin-B</strong>: \(C=128\), layer numbers \(=\{2, 2, 18, 2\}\) <ul> <li>base model, <strong>ViT-B</strong>와 <strong>DeiT-B</strong>의 모델 크기 및 복잡도가 비슷하도록 설계</li> </ul> </li> <li> <strong>Swin-L</strong>: \(C=192\), layer numbers \(=\{2, 2, 18, 2\}\)</li> <li> <p>\(C\)는 <strong>Stage 1</strong>의 hidden layers의 채널 수</p> </li> <li>window size, \(M=7\)</li> <li>query dimension of each head, \(d=32\)</li> <li>each MLP, \(\alpha=4\)</li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="4-experiments">4. Experiments</h2> <h3 id="41-image-classification-on-imagenet-1k">4.1 Image Classification on ImageNet-1K</h3> <p><img src="https://images.velog.io/images/riverdeer/post/2c8dcc3c-6a4c-404d-af0d-c95d0acd88af/image.png" alt=""></p> <p><strong>표 1(a)</strong>는 <strong>ImageNet-1K</strong>에 학습한 경우를 나타내며, <strong>표 1(b)</strong>는 <strong>ImageNet-22K</strong>에 사전학습하고 <strong>ImageNet-1K</strong>에 미세조정한 경우를 나타낸다. 위와 같이 <strong>1. 거대한 데이터에 사전학습하고 미세조정을 수행할 경우</strong>는 물론이고 <strong>2. 사전학습을 거치지 않은 경우</strong>에도 최고의 결과를 보였다.</p> <p><br></p> <h3 id="42-object-detection-on-coco">4.2 Object Detection on COCO</h3> <p><img src="https://images.velog.io/images/riverdeer/post/8c07e6b8-166d-4fba-a76b-6bac66ddaefc/image.png" alt=""></p> <p><br></p> <h3 id="43-semantic-segmentation-on-ade20k">4.3 Semantic Segmentation on ADE20K</h3> <p><img src="https://images.velog.io/images/riverdeer/post/84b7376c-2120-4631-8019-1cd45658ed73/image.png" alt=""></p> <p><br></p> <h3 id="44-ablation-study">4.4 Ablation Study</h3> <p>아래 세 가지 task에 대해 Ablation study를 진행</p> <ul> <li>Image Classification <strong>ImageNet-1K</strong> </li> <li>Cascade Mask R-CNN을 방법으로 하여 <strong>COCO</strong> Object detection</li> <li>UperNet을 방법으로, <strong>ADE20K</strong> Semantic Segmentation</li> </ul> <p><img src="https://images.velog.io/images/riverdeer/post/9aa8e1e3-7419-4bd9-ba0d-b5233b717abb/image.png" alt=""></p> <p><br></p> <p><strong>[@ Shifted windows]</strong> 세 가지 task 모두에게서 <strong>shifted windows</strong> 방법이 효과있음을 보이고 있다. 이 방법이 window들 간의 연관성을 모델링할 수 있음을 알 수 있다.</p> <p><strong>[@ Relative position bias]</strong> 기존 Vision Transformer에서 사용했던 <strong>[abs]</strong>(absolute position embedding의 사용이 효과적임을 볼 수 있다.</p> <blockquote> <p><strong>[app]</strong>(the first scaled dot-product term)는 아래 수식에서 \(\sqrt d\)를 의미하는 것으로 보인다.</p> </blockquote> <blockquote> \[\mathrm{Attention}(Q, K, V) = \mathrm{SoftMax}(QK^T/\sqrt d + B)V\] </blockquote> <p><strong>[@ Different Self-attention methods]</strong> 아래 <strong>표 5</strong>와 <strong>표 6</strong>은 cyclic shifting + shifted windows를 통한 window 내의 self-attention 계산의 효용성을 보인다. 기존 Vision Transformer 모델들의 sliding window에 비해 성능은 대등하지만 그 계산 복잡도는 현저한 차이를 보인다. 가장 빠른 Trnasformer 아키텍처 중 하나인 <a href="https://arxiv.org/abs/2009.14794" rel="external nofollow noopener" target="_blank">Performer</a>와 비교해서도 본 논문에서 제안하는 방법이 더 나은 결과를 보였다. <img src="https://images.velog.io/images/riverdeer/post/1a9f900f-96f3-4d7d-a1b5-ef980f75ecf3/image.png" alt=""></p> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

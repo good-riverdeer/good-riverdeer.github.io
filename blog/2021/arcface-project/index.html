@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [project-review] ArcFace를 활용한 한국인 안면 인식 | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="ArcFace를 활용한 한국인 안면 인식 프로젝트 회고"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2021/arcface-project/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[project-review] ArcFace를 활용한 한국인 안면 인식</h1> <p class="post-meta"> Created on September 30, 2021 </p> <p class="post-tags"> <a href="/blog/2021"> <i class="fa-solid fa-calendar fa-sm"></i> 2021 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/arcface"> <i class="fa-solid fa-hashtag fa-sm"></i> ArcFace</a>   <a href="/blog/tag/face-recognition"> <i class="fa-solid fa-hashtag fa-sm"></i> face_recognition</a>   ·   <a href="/blog/category/project-review"> <i class="fa-solid fa-tag fa-sm"></i> project-review</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <h3 id="개요">개요</h3> <p>이번 학기 학부 졸업 프로젝트 과제의 주제로 현재 COVID-19의 확산과 무인화 경향에 힘입어 <strong>“딥러닝 기반 얼굴인식을 활용한 본인인증 시스템”</strong>을 개발해보았다. 이번 포스팅에서는 위와 같은 프로젝트 수행 과정에서 ArcFace를 활용한 얼굴인식 모델을 구현해보는 과정을 간략하게 소개한다.</p> <p><br><br><br></p> <h2 id="1-arcface를-활용한-안면인식-모델-개발">1. ArcFace를 활용한 안면인식 모델 개발</h2> <h3 id="-arcface">@ ArcFace</h3> <p><a href="https://arxiv.org/abs/1801.07698" rel="external nofollow noopener" target="_blank">Deng, J., Guo, J., Xue, N., &amp; Zafeiriou, S. (2018). ArcFace: Additive Angular Margin Loss for Deep Face Recognition. In 2019 IEEE. In <em>CVF Conference on Computer Vision and Pattern Recognition (CVPR)</em> (pp. 4685-4694).</a></p> <p>ArcFace는 Metric Leaning의 한 종류로 Metric Leaning은 그 활용과 학습 방법이 여타 다른 딥러닝 활용 방법과 조금은 다르다.</p> <ul> <li>우선 매우 많은 클래스 종류를 가진 <strong>분류(Classification) 문제를 학습</strong>시킨다. <ul> <li>안면인식의 경우에는 매우 많고 다양한 사람들의 얼굴 이미지를 입력으로, 그 사람이 <strong>어떤 사람인지 분류해내는 것을 학습</strong>하게 된다.</li> </ul> </li> <li>이 분류 문제를 학습하면서 입력 이미지에 대한 Embedding을 부가적으로 학습하게 된다. <ul> <li> <strong>동일한 클래스의 이미지들은 서로 가깝게</strong> 위치하도록, <strong>다른 클래스의 이미지들은 서로 멀리</strong> 떨어지도록 Embedding을 구성할 수 있게 학습하게 된다.</li> <li>따라서 ArcFace에 동일한 두 사람의 얼굴 이미지를 입력하면 두 이미지에 대한 Embedding은 서로 매우 가깝게 위치하도록, 다른 두 사람의 얼굴 이미지를 입력하면 서로 매우 멀리 떨어뜨리도록 학습하게 된다.</li> </ul> </li> <li>이렇게 학습한 Embedding network를 활용할 때는 <strong>분류 레이어 (Classification layer)는 떼어내고 활용</strong>하게 된다. <ul> <li>이번 프로젝트에서는 이렇게 학습된 Embedding network에 두 사람의 얼굴 이미지를 입력해 각각 이미지에 대한 Embedding을 추출하고 이 <strong>두 Embedding의 거리</strong>를 계산해 일정 거리보다 <strong>멀면 다른 사람</strong>으로, <strong>가까우면 동일한 사람</strong>으로 판별하는 시스템을 만들게 된다.</li> </ul> </li> </ul> <p><br></p> <h3 id="-한국인-얼굴-사진k-face-데이터">@ 한국인 얼굴 사진(K-Face) 데이터</h3> <h4 id="데이터의-출처">데이터의 출처.</h4> <p>한국인 얼굴 사진(K-Face) 데이터베이스는 “한국정보화진흥원”의 “영상분야 지식베이스 구축” 사업과 “인공지능학습용 AI데이터 구축”사업의 일환으로 구축되었다. 데이터는 무료이지만 <strong>AI Hub</strong>의 허가를 통해 제공받아야 한다<a href="https://kface.aihub.or.kr/#/" rel="external nofollow noopener" target="_blank">(링크)</a>.</p> <p><br></p> <h4 id="데이터의-구성">데이터의 구성</h4> <p>데이터의 구성은 AI Hub의 공식 <a href="https://github.com/k-face/k-face_2019" rel="external nofollow noopener" target="_blank">GitHub</a> repository에서 공개되어 있는 내용을 참고했다. 제공받은 K-Face 데이터셋의 구조는 다양한 <strong>영상 해상도, Class ID, 액세서리 유무, 조명 위치 및 세기, 표정, 포즈 방향</strong>에 따라 구성되어 있다.</p> <ol> <li>해상도 3종 (High [864, 576], Middle [346, 230], Low [173, 115])</li> <li>액세서리 6종 (S001 ~ S006)</li> <li>조명 30종 (L1 ~ L30) (조도 30 lightings)</li> <li>표정 3종 (E01 ~ E03)</li> <li>각도 20종 (C1 ~ C20) (20 views)</li> </ol> <p><img src="https://images.velog.io/images/riverdeer/post/b2286b48-883d-4268-937b-84a2f7b1c810/image.png" alt="img-description" width="500"> <em>AI Hub: K-Face 데이터셋 구성</em></p> <p><br></p> <h4 id="특징점-위치-및-인덱스">특징점 위치 및 인덱스</h4> <p>뿐만 아니라 다양한 얼굴의 특징점, Bounding Box도 일부 데이터에 한해 제공하고 있다.</p> <p><img src="https://images.velog.io/images/riverdeer/post/448ebf19-92a4-4a86-a160-f49d4ef4a872/image.png" alt="img-description" width="500"> <em>bounding box annotation 예시</em></p> <ul> <li>Bounding Box 검출 대상 <ul> <li>촬영 각도: 촬영되는 모든 각도</li> <li>조명(4 종류): L1 (1000 Lux), L3 (200 Lux), L6 (40 Lux), L7 (0 Lux)</li> <li>표정(3종류): E01 (무표정), E02 (활짝웃음), E03 (찡그림)</li> <li>액세서리(1종류): S001 (보통)</li> </ul> </li> </ul> <p><br></p> <h4 id="데이터-전처리-과정">데이터 전처리 과정</h4> <ol> <li>하드웨어의 한계와 학습의 효율을 고려하여 <strong>고, 중, 저</strong>화질의 이미지 중 중화질의 이미지를 사용했다.</li> <li>전체 데이터에서 얼굴인식 task에 적합하도록 얼굴 영역을 추출할 수 있는 조명 4종류, 표종 3종류 액세서리 1종류에 대한 이미지만을 사용했다.</li> <li>총 4종류의 조명 세기 중에 피사체가 확실하게 식별되는 <strong>L1, L3</strong> 조명 세기만 학습에 사용했다. <ul> <li>나머지 <strong>L6, L7</strong>의 밝기는 굉장히 어두워서 제외했다.</li> </ul> </li> <li>다양한 촬영 각도 중 얼굴의 정면이 확실하게 식별되는 4종류의 촬영 각도(<strong>“C6”, “C7”, “C8”, “C9”</strong>)를 선별하고 이를 학습에 사용했다.</li> <li>(400명) x (조명 2종) x (촬영각도 4종) x (표정 3종) = 총 9,600장 <ul> <li>이 중 10명의 인원에 대한 이미지는 모델의 검증을 위한 데이터로 사용했다. <ul> <li>train set: (390명) x (조명 2종류) x (촬영각도 4종류) x (표정 3종류) = 총 9,360장</li> <li>validation set: (10명) x (조명 2종류) x (촬영각도 4종류) x (표정 3종류) = 총 240장</li> </ul> </li> </ul> </li> </ol> <p><img src="https://images.velog.io/images/riverdeer/post/76dafccc-763c-45d0-8ba1-f81dad5bba1f/image.png" alt="img-description"> <em>이미지 crop 전/후</em></p> <p><br></p> <h3 id="-얼굴인식-모델-개발">@ 얼굴인식 모델 개발</h3> <p>ArcFace 모델의 소스코드는 <strong>“peteryuX”</strong>님의 <a href="https://github.com/peteryuX/arcface-tf2" rel="external nofollow noopener" target="_blank">GitHub</a>을 참고했다. 이 GitHub에서 감사하게도 거대한 얼굴인식 데이터셋인 MS-Celeb-1M 데이터에서 학습한 모델을 제공하고 있었으며 이를 활용했다.</p> <p>이번 프로젝트의 목표는 한국인에 대한 얼굴인식이었기 때문에 사전학습 모델을 우리가 확보한 K-Face 이미지에 적합하게 미세조정(Fine-Tuning)하는 방향으로 수행했다.</p> <h3 id="-모델-검증">@ 모델 검증</h3> <p>검증 데이터셋 10명, 240장에 대한 동일인물 구별 실험을 설계했다.</p> <ol> <li>240장의 사진 중 랜덤한 두 사진을 선택하여 사진쌍을 생성</li> <li>생성할 때 선택된 사진쌍이 <strong>동일인물인 경우 200쌍</strong>과 <strong>동일인물이 아닐 경우 200쌍</strong>, 총 400쌍의 사진쌍을 생성했다.</li> </ol> <p>앞에서 학습한 모델이 각각 사진쌍에 대해서 512차원의 임베딩 벡터를 추출하도록하고 그 두 임베딩의 거리를 측정하여 <strong>임계값보다 작으면 동일인물</strong>, <strong>크면 동일인물이 아닌 것</strong>으로 분류했다.</p> <p>마지막으로 여기서 사용되는 임계값을 \([1, 4]\)의 범위에서 \(0.01\)씩 늘려가며 반복실험했다.</p> <p><img src="https://images.velog.io/images/riverdeer/post/8027f274-4e47-45d4-9ab6-f3a53f004a56/image.png" alt="img-description" width="700"> <em>동일인물 검증 실험</em></p> <h3 id="-검증-결과">@ 검증 결과</h3> <p>위에서 수행한 실험에 대해 ROC Curve를 그려본 결과이다.</p> <p>미세조정 이전에도 충분히 높은 성능을 보여주었지만, 미세조정 후에 AUC가 0.1정도 향상되었다</p> <p><img src="https://images.velog.io/images/riverdeer/post/e297ba36-8e79-4b12-989b-79f0d146f8c5/image.png" alt="img-description" width="500"></p> <p><br><br><br></p> <h2 id="2-본인인증-시스템-구축">2. 본인인증 시스템 구축</h2> <p>위에서 학습한 ArcFace 딥러닝 모델을 기반으로 아주 기본적인 형태의 본인인증 시스템을 만들 수 있었다. 시스템의 입력 값은 자신의 <strong>신분증</strong>과 실시간으로 촬영된 자신의 <strong>얼굴 사진</strong>이다.</p> <ol> <li>먼저 사용자는 자신의 신분증을 입력한다. <ul> <li>이번 프로젝트에서 구현한 형태는 미리 이미지 파일로 저장해놓고 사진 파일명을 입력하는 형태로 이루어지는 형태이다.</li> </ul> </li> <li>신분증에서 Tesseract를 활용한 OCR을 진행한 후 생년월일 부분을 추출하여 성인임을 판별한다.</li> <li>사용자의 실시간 얼굴 사진을 촬영한다. <ul> <li>이 때, 사진을 도용하는 것을 방지하기 위해 시스템은 특정 모션을 수행하도록 요구</li> <li>모션을 올바르게 수행했을 때만 다음 단계로 이동할 수 있다.</li> </ul> </li> </ol> <p><img src="https://images.velog.io/images/riverdeer/post/f29b59bc-3564-4f36-b38f-27d3351d55b2/image.png" alt=""></p> <ol> <li>입력받은 <strong>신분증 이미지</strong>와 <strong>촬영한 실시간 얼굴 이미지</strong>에서 얼굴 영역을 dlib 오픈소스 라이브러리를 통해 추출한다.</li> <li>추출한 얼굴 영역을 입력으로 하여 위에서 학습한 ArcFace 모델을 통해 두 이미지에 대한 Embedding을 추출한다.</li> <li>(5)에서 추출한 두 Embedding의 거리를 계산하여 일정 값보다 가까우면 동일인물임을, 가깝지 않으면 동일인물이 아님을 출력한다.</li> </ol> <p><img src="https://images.velog.io/images/riverdeer/post/e0200926-1caa-43c8-83b2-fffb2cfd1bd7/image.png" alt=""></p> <blockquote> <p><a href="https://github.com/FaceID-Dongguk-Univ/FaceID" rel="external nofollow noopener" target="_blank">GitHub repository</a></p> </blockquote> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

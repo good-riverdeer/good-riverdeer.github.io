@@ -1,0 +1,337 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> [paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2022/needle/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data</h1> <p class="post-meta"> Created on February 16, 2022 </p> <p class="post-tags"> <a href="/blog/2022"> <i class="fa-solid fa-calendar fa-sm"></i> 2022 </a>   ·   <a href="/blog/tag/deep-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> deep_learning</a>   <a href="/blog/tag/named-entity-recognition"> <i class="fa-solid fa-hashtag fa-sm"></i> Named_Entity_Recognition</a>   <a href="/blog/tag/ner"> <i class="fa-solid fa-hashtag fa-sm"></i> NER</a>   ·   <a href="/blog/category/paper-review"> <i class="fa-solid fa-tag fa-sm"></i> paper-review</a>   <a href="/blog/category/natural-language-processing"> <i class="fa-solid fa-tag fa-sm"></i> Natural Language Processing</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p><a href="https://arxiv.org/pdf/2106.08977.pdf" rel="external nofollow noopener" target="_blank">Jiang, H., Zhang, D., Cao, T., Yin, B., &amp; Zhao, T. (2021). Named entity recognition with small strongly labeled and large weakly labeled data. <em>arXiv preprint arXiv:2106.08977.</em></a></p> <p><em>개인적인 논문해석을 포함하고 있으며, 의역 및 오역이 남발할 수 있습니다. :)</em></p> <p><br></p> <hr> <p><br></p> <h2 id="1-introduction">1. Introduction</h2> <p>Deep learning 방식의 NER은 많은 데이터를 필요로 합니다. NER task에 대한 레이블링 작업은 token-level의 레이블링이 필요하기 때문에 시간적, 금전적 비용이 많이 들고, 작업자의 실수가 발생할 수도 있습니다. 이러한 요소들이 의료 도메인과 같은 전분 분야 특정 도메인에 대한 NER을 어렵게 만드는 요인입니다. 때문에 선행 연구에서는 labeled data가 한정적인 경우를 대응하기 위한 연구들을 진행했습니다.</p> <ul> <li> <strong><em>continually pre-train</em></strong> <ul> <li>큰 규모의 unlabeled data를 사용하는 방법 <ul> <li>거대한 unlabeled open-domain data에 대해 <strong>사전학습을 진행한 BERT가 대표적 예시</strong> </li> <li>이러한 open-domain pre-trained model은 특정 도메인 고유의 정보의 모델링 능력이 떨어짐</li> </ul> </li> <li> <strong><em>continually pre-train</em></strong>: <a href="https://academic.oup.com/bioinformatics/article/36/4/1234/5566506?login=true" rel="external nofollow noopener" target="_blank">Lee et al. (2020)</a>; <a href="https://aclanthology.org/2020.acl-main.740/" rel="external nofollow noopener" target="_blank">Gururangan et al. (2020)</a> <ul> <li>이미 학습된 open-domain pre-trained model을 이어서 사전 학습하는 방법을 제안</li> <li>open-domain pre-trained model이 특정 도메인의 지식을 갖도록 하기 위함</li> </ul> </li> </ul> </li> <li> <strong><em>weak supervision</em></strong> <ul> <li>도메인 지식 베이스에서 자동적으로 label을 생성하는 방법</li> <li> <a href="https://aclanthology.org/D18-1230/" rel="external nofollow noopener" target="_blank">Shang et al. (2018)</a> <ul> <li>“Biomedical dictionary”를 통해 unlabeled Biomedical documents에 레이블을 자동 생성</li> </ul> </li> </ul> </li> </ul> <p>사람이 직접 생성하는 <strong>strongly labeled data</strong>는 위에서 언급한 것처럼 비용이 많이 소요되기 때문에 적은 양일 경우가 많습니다. 반면에 엄청난 양의 large scale unlabeled data와 전문 분야 domain knowledge를 이용해 자동적으로 생성하는 <strong>weakly labeled data</strong>는 그 양을 많이 확보할 수 있죠.</p> <p>논문에서 저자들은 Weak labels가 아래 세 가지 특징을 가진다고 말합니다.</p> <ul> <li> <strong>incompleteness</strong>: 세상에 존재하는 모든 entity를 지식 베이스가 모두 커버할 수 없음</li> <li> <strong>labeling bias</strong>: 자동적으로 생성되는 weak label은 entity가 아닌 것을 entity라고 할당하는 등의 노이즈가 발생</li> <li> <strong>ultra-large scale</strong>: 자동으로 생성될 수 있기 때문에 strong label에 비해 그 수가 많음</li> </ul> <p>위 특징을 가진 Weakly labeled data를 잘 활용할 수 있는 방법은 무엇일까요? 논문에서는 <strong>ultra-large scale</strong>의 특성으로 인해 유용한 도메인 지식은 확보할 수 있으나, 동시에 많은 양의 데이터가 <strong>incompleteness</strong>, <strong>labeling bias</strong>의 특성을 가지고 있기 때문에 이에 따른 노이즈의 영향도 많아질 수 밖에 없다고 말합니다. 때문에 NER 모델의 학습에 (Strongly + Weakly)의 단순히 조합하는 방식이나 label에 따른 가중치를 매겨 조합하는 방식 모두 <strong>incompleteness</strong>, <strong>labeling bias</strong> 특성이 야기하는 노이즈에 영향을 받을 수 있다고 말합니다.</p> <p>이를 해결하고자 논문에서는 프레임워크 NEEDLE을 제안합니다.</p> <ul> <li>NEEDLE; Noise-aware wEakly supErviseD continuaL prE-training <ul> <li>Stage 1 <ul> <li>open-domain pre-trained model을 target domain에 대해 사전학습</li> <li>특정 도메인(target domain)의 큰 규모의 unlabeled data를 이용</li> </ul> </li> <li>Stage 2 <ul> <li>target domain의 지식 베이스를 통해 unlabeled data에 weak label을 자동 생성</li> <li>(Strongly labeled data + Weakly labeled data)를 이용 NER 학습</li> </ul> </li> <li>Stage 3 <ul> <li>Strongly labeled data만으로 다시 한번 NER 학습</li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/154254624-1fd44830-9bcb-44c8-ad3b-dbe908cf7d09.png" alt="image-description"></p> <h3 id="contributions">Contributions</h3> <ul> <li>(Strong labels + Weak labels)의 단순한 조합, 가중치를 부여한 조합을 사용해 학습하는 경우 모델 성능이 떨어질 수 있음을 보임 <ul> <li>압도적인 양(<strong>ultra-large scale</strong>)을 가진 weak label의 노이즈 영향 때문</li> </ul> </li> <li>세 단계의 프레임워크 NEEDLE을 제안, 압도적인 양의 weak label의 영향을 줄임 <ul> <li>다양한 실험 환경 <ul> <li>E-commerce query (온라인 쇼핑몰 검색어) NER task</li> <li>Biomedical NER task</li> <li>multi-lingual 환경</li> </ul> </li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="2-preliminaries">2. Preliminaries</h2> <h3 id="21-named-entity-recognition">2.1. Named Entity Recognition</h3> <p>NER(Named Entity Recognition)은?</p> <ul> <li>\(N\)개의 tokens로 이루어진 한 문장 \(\mathbf X = [x_1, ..., x_N]\)에 대해서 한 토큰 범위 (a span of tokens) \(s = [x_i, ..., x_j] (0 \le i \le j \le N)\)를 하나의 엔티티(an entity)로 가집니다.</li> <li>\(\mathbf X\)에 대한 레이블 시퀀스(a sequence of labels) \(\mathbf Y = [y_1, ..., y_N]\)는 <code class="language-plaintext highlighter-rouge">BIO</code> tag를 가지는 토큰 시퀀스입니다. <ul> <li> <code class="language-plaintext highlighter-rouge">BIO</code> <ul> <li> <code class="language-plaintext highlighter-rouge">X</code> entity type의 \(s\)의 첫 토큰은 <code class="language-plaintext highlighter-rouge">B-X</code> </li> <li>이후 \(s\)의 다른 토큰들은 <code class="language-plaintext highlighter-rouge">I-X</code> </li> <li>entity가 아닌 토큰들은 <code class="language-plaintext highlighter-rouge">O</code> </li> </ul> </li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">BIO</code>로 구성된 a sequence of token labels \(\mathbf Y\)를 예측하는 것이 NER(Named Entity Recognition) task라고 할 수 있습니다.</li> <li> <strong>Supervised NER</strong> <ul> <li>\(M\)개의 주어진 문장과 이미 label이 할당된 집합 \(\set{(\mathbf X_m, \mathbf Y_m)}^M_{m=1}\), NER 모델 \(f(\mathbf X; \theta)\)에 대해 아래의 목적함수 최적화하며 학습하는 전형적인 딥러닝의 학습 기반 방법입니다.</li> <li> \[\hat\theta = \arg\min_{\theta} {1 \over M} \sum^M_{m=1} l(\mathbf Y_m, f(\mathbf X_m; \theta))\] </li> <li>\(l(\cdot, \cdot)\): cross-entropy loss</li> </ul> </li> <li> <strong>Weakly Supervised NER</strong> <ul> <li>반면에 \(\set{\mathbf Y_m}^M_{m=1}\)을 자동으로 생성한 weakly labeled data로 교체하여 위와 동일한 목적함수를 통해 학습하는 방법을 말합니다.</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="3-method">3. Method</h2> <p><img src="https://user-images.githubusercontent.com/67779236/154254624-1fd44830-9bcb-44c8-ad3b-dbe908cf7d09.png" alt="image-description"></p> <h3 id="31-stage-1-domain-continual-pre-training-over-unlabeled-data">3.1. Stage 1: Domain Continual Pre-training over Unlabeled Data</h3> <p>선행 연구를 따라 the large in-domain unlabeled data \(\set{\tilde{\mathbf X}_m}^{\tilde M}_{m=1}\)을 사용해 사전 학습된 언어 모델 \(f_{LM}(\cdot; \theta_{enc}, \theta_{LM})\)을 추가 학습하는 과정입니다. 논문에서는 Masked Language Model 사전 학습 task를 이용해 학습한다고 언급했습니다. <em>이를 통해 Introduction에서 언급했던 특정 분야 도메인에 모델을 적응할 수 있게 할 수 있습니다.</em></p> <ul> <li>masked language model: 언어 모델의 사전 학습에 가장 많이 사용되는 학습 방법 (Devlin et al. (2019) 참조)</li> <li>\(\theta_{enc}\): 언어 모델 encoder의 parameter, 예) BERT의 parameter</li> <li>\(\theta_{LM}\): token classification head의 parameter, 예) fully-connected layer의 parameter</li> </ul> <p><br></p> <h3 id="32-stage-2-noise-aware-continual-pre-training-over-both-strongly-and-weakly-labeled-data">3.2. Stage 2: Noise-Aware Continual Pre-training over both Strongly and Weakly labeled Data</h3> <p>본격적으로 NER을 학습하기 이전에 대규모의 weakly labeled data를 만들어내야 합니다. 논문에서는 전문 용어 사전(dictionary)을 구축하고 이 용어 사전 내 단어와 정확한 string matching이 발생하는 구간을 태깅하는 방식을 사용합니다. 이에 대한 자세한 설명은 논문의 <strong><em>Appendix E</em></strong>를 참고하면 되겠습니다.</p> <p>자동 생성된 weakly labeled data: \(\set{(\tilde{\mathbf X}_m, \tilde{\mathbf Y}_m^w)}^{\tilde M}_{m=1}\) 를 사용해 <code class="language-plaintext highlighter-rouge">BERT-CRF</code>구조의 모델로 본격적인 NER 학습이 진행됩니다. 이 때 모델의 가중치는 Stage 1의 <code class="language-plaintext highlighter-rouge">BERT</code> parameter(\(\theta_{enc}\)) + 랜덤하게 초기화된 CRF layer의 parameter(\(\theta_{CRF}\)) 조합으로 구성됩니다.</p> <p>이 모델에 약간의 Strongly labeled data를 통한 NER 학습을 진행시킨 뒤(Initial model) 논문의 주요 기여점이라 할 수 있는 <strong><em>Weak Label Completion</em></strong>과 <strong><em>Noise-Aware Loss Function</em></strong>의 테크닉을 적용해 Strongly + Weakly labeled data 모두 사용해 본격적인 학습이 시작됩니다.</p> <ul> <li> <strong><em>Weak Label Completion</em></strong> <ul> <li>해당 테크닉은 Initial model의 예측 값으로 weak label을 대체하는 과정이라고 요약할 수 있는데, 간단하게 입력값(inputs)과 출력값(output)을 수식으로 표현할 수 있습니다.</li> <li>inputs <ul> <li>a sentence \(\tilde{\mathbf{X}} = [x_1, ..., x_N]\)</li> <li>the original weak labels \(\tilde{\mathbf{Y}^w} = [y_1^w, ..., y_M^w]\)</li> <li>the predictions from the initial model \(\tilde{\mathbf Y}^p = \arg\min_{\mathbf Y} l(\mathbf Y, f(\tilde{\mathbf X}; \theta_{enc}, \theta_{CRF})) = [y_1^p, ..., y_N^p]\)</li> </ul> </li> <li>output <ul> <li> \[\tilde{\mathbf Y}^c = [y_1^c, ..., y_N^c]\] </li> <li> \[y_i^c = \begin{cases} y_i^p &amp;&amp; \text{if } y_i^w = \bigcirc \\ y_i^w &amp;&amp; \text{otherwise}\end{cases}\] </li> <li>weak label이 <code class="language-plaintext highlighter-rouge">O</code>; non entity로 태깅되었다면, 모델의 예측 값을 사용</li> <li>weak label이 <code class="language-plaintext highlighter-rouge">B-X</code> 혹은 <code class="language-plaintext highlighter-rouge">I-X</code>와 같이 entity로 태깅되었다면 weak label을 그대로 사용</li> </ul> </li> <li><strong><em>누락된 entity를 Strong label에 학습한 모델의 힘을 빌려 weakly label의 불완전성을 보완하는 효과를 얻을 수 있을 것 같습니다.</em></strong></li> </ul> </li> <li> <strong><em>Noise-Aware Loss Function</em></strong> <ul> <li>저자들은 <strong>Introduction</strong>에서도 언급했듯이 weak labels은 <strong>ultra-large scale</strong>의 특성을 가지므로 불완전한 weakly labeled data 분포에 모델이 지나치게 적합되는 것을 완화하고자 했습니다. 따라서, <strong>Weak Label Completion</strong> 테크닉으로 수정된 corrected weak labels \(\tilde{\mathbf Y^c}\)의 신뢰도를 기반으로 한 손실함수를 제안합니다. <ul> <li> <code class="language-plaintext highlighter-rouge">confidence</code>: \(\hat P(\tilde{\mathbf Y}^c = \tilde{\mathbf Y} \mid \tilde{\mathbf X})\): \(\tilde{\mathbf Y}^c\)가 실제 label이 될 것으로 추정되는 확률</li> <li> <code class="language-plaintext highlighter-rouge">confidence</code>가 높은 경우 log-likelihood</li> <li> <code class="language-plaintext highlighter-rouge">confidence</code>가 낮은 경우 log-<strong>un</strong>likelihood</li> </ul> </li> </ul> </li> </ul> \[\begin{aligned} &amp; l_{NA}(\tilde{\mathbf Y}^c, f(\tilde{\mathbf X}_m; \theta)) \\ &amp;= \mathbb E_{\tilde{\mathbf Y}_m = \tilde{\mathbf Y}^c_m \mid \tilde{\mathbf X}_m} \mathcal L(\tilde{\mathbf Y}^c, f(\tilde{\mathbf X}_m; \theta), \mathbb 1(\tilde{\mathbf Y}_m = \tilde{\mathbf Y}_m^c)) \\ &amp;= \hat P(\tilde{\mathbf Y}^c = \tilde{\mathbf Y} \mid \tilde{\mathbf X})l(\tilde{\mathbf Y}^c, f(\tilde{\mathbf X}; \theta)) + P(\tilde{\mathbf Y}^c \ne \tilde{\mathbf Y} \mid \tilde{\mathbf X})l^-(\tilde{\mathbf Y}^c, f(\tilde{\mathbf X}; \theta)) \end{aligned}\] \[\begin{aligned} &amp; l(\tilde{\mathbf Y}^c, f(\tilde{\mathbf X}; \theta)) = -\log P_{f(\mathbf X; \theta)}(\mathbf Y) &amp;\\ &amp;l^-(\tilde{\mathbf Y}^c, f(\tilde{\mathbf X}; \theta)) = -\log [1 - P_{f(\mathbf X; \theta)}(\mathbf Y)] \end{aligned}\] <ul> <li> <code class="language-plaintext highlighter-rouge">confidence</code> 추정 (<strong><em>Appendix A</em></strong>) <ul> <li>corrected weak label의 <code class="language-plaintext highlighter-rouge">confidence</code>, \(\hat P(\tilde{\mathbf Y}^c = \tilde{\mathbf Y} \mid \tilde{\mathbf X})\)를 추정하는 과정은 <strong><em>Appendix A</em></strong>에서 다루고 있습니다. 최종적으로는 original weak label과 model prediction의 신뢰도의 선형 결합으로 추정하게 됩니다. <ul> <li>original weak label이 model prediction과 일치하는 경우 weak label의 신뢰도 가중</li> <li>original weak label이 model prediction과 일치하지 않는 경우 model prediction의 신뢰도를 가중</li> </ul> </li> <li>이 때 model prediction의 신뢰도; \(\hat P(\tilde{\mathbf Y}^p = \tilde{\mathbf Y} \mid \tilde{\mathbf X})\)의 추정은 CRF score의 분포에 histogram binning을 적용하고 각 bin에 대해 validation set에 대한 결과를 바탕으로 <code class="language-plaintext highlighter-rouge">confidence</code>를 추정합니다. <em>추정 방법에 대해서는 정확히 이해하지 못하였습니다…ㅜ</em> </li> <li> <code class="language-plaintext highlighter-rouge">confidence</code>가 너무 높은 경우에는 이를 완화하는 후처리 작업도 진행했습니다. <ul> <li> \[P(\tilde{\mathbf Y}^c = \tilde{\mathbf Y} \mid \tilde{\mathbf X}) = \min(0.95, P(\tilde{\mathbf Y}^c = \tilde{\mathbf Y} \mid \tilde{\mathbf X}))\] </li> </ul> </li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/154609112-62ff2549-98cc-4a72-8516-b5e064a39886.png" alt="image-description"> <em>corrected weak label의 신뢰도는 weak label &amp; model prediction의 신뢰도 선형 결합으로 정의된다.</em></p> <p><img src="https://user-images.githubusercontent.com/67779236/154789394-944eba4b-56a4-4d38-bf9b-96f18272b0d9.png" alt="image-description"> <em>논문에서 제시한 예시, CRF score histogram bin과 <code class="language-plaintext highlighter-rouge">confidence</code>의 상관관계를 확인할 수 있다.</em></p> <ul> <li> <strong><em>Noise-Aware Loss Function</em></strong>의 해석 <ul> <li>이렇게 정의된 Noise-aware loss를 자세히 살펴보면 log-<strong>un</strong>likelihood loss는 <strong>regularization term</strong>으로 보이고, <code class="language-plaintext highlighter-rouge">confidence</code>는 loss term (여기서는 log-likelihood)과 regularization term (여기서는 log-<strong>un</strong>likelihood) 사이의 가중을 결정하는 <strong>adaptive weight</strong>로 보이기도 합니다.</li> </ul> </li> <li>최종 손실함수 <ul> <li>최종적으로 Stage 2의 Initial model 학습에 strongly labeled data에 대해서는 일반적인 negative log-likelihood를, weakly labeled data에 대해서는 <strong><em>Noise-Aware Loss Function</em></strong>를 사용하게 됩니다.</li> </ul> </li> </ul> \[\min_\theta {1\over M+\tilde M} \left[ \sum^M_{m=1} l(\mathbf Y_m, f(\mathbf X_m ;\theta)) + \sum^{\tilde M}_{m=1}l_{NA}(\tilde{\mathbf Y^c}_m, f(\tilde{\mathbf X_m}; \theta))\right]\] <p><br></p> <h3 id="33-stage-3-final-fine-tuning">3.3 Stage 3: Final Fine-tuning</h3> <p>Stage 2에서 Initial model을 만들었던 방법대로 Strongly labeled data에 다시 한 번 최종적으로 미세 조정하게 됩니다. <strong>Experiment</strong> 파트에서 이 효과를 설명하고 있습니다.</p> <p><br></p> <hr> <p><br></p> <h2 id="4-experiments">4. Experiments</h2> <ul> <li>baseline models <ul> <li>transformer-based open-domain pretrained models + CRF</li> <li>e.g., <code class="language-plaintext highlighter-rouge">BERT</code>, <code class="language-plaintext highlighter-rouge">mBERT</code>, <code class="language-plaintext highlighter-rouge">RoBERTa-Large</code> + CRF</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">BIO</code> tagging scheme으로 entity tagging</li> <li> <code class="language-plaintext highlighter-rouge">Adam</code> optimizer</li> </ul> <h3 id="41-datasets">4.1. Datasets</h3> <ul> <li>E-commerce query domain <ul> <li>English NER <ul> <li>10 different entity types</li> </ul> </li> <li>multilingual NER <ul> <li>12 different entity types</li> </ul> </li> <li>unlabeled in-domain data &amp; weak annotation <ul> <li>쇼핑 웹사이트(Amazon)의 사용자 행동 데이터를 수집</li> </ul> </li> </ul> </li> <li>Biomedical domain <ul> <li>unlabeled data <ul> <li> <code class="language-plaintext highlighter-rouge">PubMed 2019 baseline</code> 수집</li> </ul> </li> <li>weak annotation <ul> <li>수집한 <code class="language-plaintext highlighter-rouge">dictionary</code>에서 exact string matching을 통해 할당</li> <li><em><code class="language-plaintext highlighter-rouge">dictionary</code>수집 방법에 대해선 언급하지 않았음</em></li> </ul> </li> </ul> </li> <li>Weak labels performance <ul> <li> <code class="language-plaintext highlighter-rouge">Table 1</code>의 weak label이 strong(golden; <em>데이터셋이 제공하는 원래 label</em>) label과 비교</li> <li>E-commerce query domain에서 golden label에 비해 <code class="language-plaintext highlighter-rouge">Recall</code> 값이 많이 떨어짐</li> <li><em>entity가 아닌 것을 entity로 태깅하는 경우가 많은 것으로 보임</em></li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/154636433-fb98cb01-f747-423c-8f61-c5d0ecaa4018.png" alt="image-description"> <em>Table 1. E-commerce query domain의 Weak label의 퀄리티가 다소 떨어지는 것이 보인다.</em></p> <p><br></p> <h3 id="42-baselines">4.2. Baselines</h3> <ul> <li>모든 baseline 모델들은 in-domain unlabeled data에 continually pre-training을 진행하였습니다 (Stage 1). baseline 모델들에 대한 설명은 생략…</li> </ul> <p><br></p> <h3 id="43-e-commerce-ner">4.3. E-commerce NER</h3> <h3 id="431-main-results">4.3.1. Main Results</h3> <p><img src="https://user-images.githubusercontent.com/67779236/154637841-e0a5162a-1961-4757-9d38-4926114e4265.png" alt="image-description"></p> <ul> <li>weakly supervised baselines <ul> <li>WSL(weakly supervised learning) 방식이 가장 성능이 떨어집니다. 이를 통해 weakly labeled data가 모델의 성능을 떨어뜨릴 수 있음을 알 수 있습니다.</li> </ul> </li> <li>semi-supervised baselines <ul> <li>재미있게도, semi-supervised 방식이 오히려 supervised 방식의 성능을 능가하는데, 모델이 만들어낸 pseudo label이 weak label보다 좋을 수 있다고 추정할 수 있습니다. 최종적으로 NEEDLE은 semi-supervised 방식보다 성능이 좋았으며 pseudo label만을 사용하는 것보다 적절한 weak label을 함께 활용하는 것이 좋을 수 있다고 저자는 말합니다.</li> </ul> </li> </ul> <h3 id="432-ablation">4.3.2. Ablation</h3> <p><img src="https://user-images.githubusercontent.com/67779236/154638574-c3d9f845-795d-4d4a-824f-da64263aaa75.png" alt="image-description"> <em>WLC - Weak label completion; NAL - Noise-aware loss function; FT - Final fine-tuning</em></p> <p><br></p> <h3 id="44-biomedical-ner">4.4. Biomedical NER</h3> <p><img src="https://user-images.githubusercontent.com/67779236/154639134-b3d0cc34-d745-468b-a630-464721026f16.png" alt="image-description"></p> <p><br></p> <h3 id="45-analysis">4.5. Analysis</h3> <ul> <li><strong>Size of Weakly Labeled Data</strong></li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/154639643-e303d1fa-623b-4735-b9d6-a7552af459ce.png" alt="image-description"></p> <ul> <li> <code class="language-plaintext highlighter-rouge">Figure 2(a)</code> &amp; <code class="language-plaintext highlighter-rouge">Figure 2(b)</code> <ul> <li>weakly labeled data의 양을 변경하며 실험했을 때, SST 방식은 성능 변화 폭이 미미했습니다. 반면 NEEDLE의 경우 weakly labeled data가 늘어날수록 성능 역시 향상되는 것을 볼 수 있고 NEEDLE이 weakly labeled data를 비교적 잘 활용하고 있다고 볼 수 있습니다.</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">Figure 2(c)</code> <ul> <li>weakly labeled data의 수가 늘어날수록 fine-tuning 수행 유무에 따라 성능 차이가 벌어지는 것을 볼 수 있는데, final fine-tuning을 통해 학습할 유용한 정보가 있을 수 있음을 나타내고 있습니다.</li> </ul> </li> <li> <strong>Two Rounds of Stage 2 Training</strong> <ul> <li>Stage 3의 효과를 관찰한 저자들은 “Final fine-tuning” 대신 Stage 2의 학습을 한 번 더 수행하면 어떨지 실험을 진행했습니다. Stage 3 이후에, <ol> <li>새로운 모델로 weak label을 수정</li> <li>strongly + weakly labeled data로 noise-aware training을 지속</li> <li>strongly labeled data로 final fine-tuning</li> </ol> </li> <li>전체적인 학습 과정을 한 바퀴 더 돌렸을 때, 약간의 성능 향상이 있었습니다. 반면에 SST 방식, NEEDLE w/o NAL의 경우엔 변화가 없었음을 볼 수 있습니다. <em>Noise-aware loss가 없는 경우 Noise-aware loss가 주요 요소인 Stage 2를 한 바퀴 더 굴린다는 개념이 의미없는 행위라고 생각이 드네요.</em> </li> </ul> </li> <li> <strong>Size of Strongly Labeled Data</strong> <ul> <li>이번에는 Stronly labeld data의 수를 조절하며 실험하는데, 30% ~ 50%의 strongly labeled data가 있으면 fully supervised 방식의 성능에 도달함을 확인했습니다. 또한 20%의 데이터만으로 다른 60% 데이터를 사용한 baseline의 성능과 동등함을 근거로 들며 3배 정도 strongly labeled data에 대해 효율적이라고 주장하고 있네요.</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/154644021-c173857c-70d5-4705-8dd9-ab86b84a80a3.png" alt="image-description"> <em>Strongly labeled data의 1% 만으로도 70% 초반의 성능을 보인다.</em></p> <p><br></p> <h3 id="46-weakly-label-errors-in-e-commerce-ner">4.6. Weakly Label Errors in E-commerce NER</h3> <p>여기에서는 weak label이 유발하는 error에 대해서 이해하고, 이를 바로 잡을 수 있는 방법들에 대해 이야기합니다.</p> <ul> <li> <strong>Label Distribution Mismatch</strong> <ul> <li>먼저 저자들은 weak label의 분포가 strong label의 분포와의 차이가 심하다고 말합니다. <code class="language-plaintext highlighter-rouge">Figure 4</code>에서도 볼 수 있듯이 분포가 많이 다릅니다. 반면 SST 방식의 모델이 만들어낸 pseudo label의 분포는 strong label의 분포와 거의 비슷한데, 이를 두고 SST 방식이 직접적으로 학습했을 때 성능이 좋은 이유라고 말합니다.</li> </ul> </li> <li> <strong>Systematical Error</strong> <ul> <li>저자들은 weakly labeled data의 시스템 내부적 error는 Stage 3; Final fine-tuning으로 쉽게 바로잡을 수 있다고 주장합니다. 여기서 예시로 들고 있는 “amiibo”는 “nintendo”사의 <code class="language-plaintext highlighter-rouge">Product Line</code> 중 하나입니다. 따라서 “amiibo” 앞에 나타나는 “zelda”나 “wario”와 같은 entity는 <code class="language-plaintext highlighter-rouge">Misc</code> 타입으로 태깅되는 것이 옳습니다. 하지만 weak label에는 이를 <code class="language-plaintext highlighter-rouge">Color</code> 타입이라고 잘못 태깅되어 있어 corrected weak label에도 <code class="language-plaintext highlighter-rouge">Color</code> 타입이라고 잘못 태깅되어 있죠.</li> <li>Stage 2에서는 이러한 샘플들을 <code class="language-plaintext highlighter-rouge">Color + ProductLine</code> 조합으로 잘못 학습하지만 Stage 3에 가서 <code class="language-plaintext highlighter-rouge">Misc + ProductLine</code>의 조합이라고 쉽게 수정될 수 있습니다.</li> <li>이와 같이 끝에 수정되는 방향이, 애초에 적은 양의 <code class="language-plaintext highlighter-rouge">Misc + ProductLine</code>의 옳게된 조합으로 학습되는 것보다 모델이 학습하기에 쉬운 방향이라고 주장하고 있습니다.</li> </ul> </li> </ul> <p><img src="https://user-images.githubusercontent.com/67779236/154791276-ea3df51a-f12e-42cd-971c-950d3e6aa831.png" alt="image-description"></p> <ul> <li> <strong>Entity <code class="language-plaintext highlighter-rouge">BIO</code> Sequence Mismatch in Weak Label Completion</strong> <ul> <li>Stage 2에서 <strong>Weak Label Completion</strong> 과정을 수행하는 과정에서 <code class="language-plaintext highlighter-rouge">BIO</code> 태깅 시퀀스가 깨져버리는 경우가 발생할 수 있습니다. 예를 들어 <code class="language-plaintext highlighter-rouge">B-ProductType</code> &gt; <code class="language-plaintext highlighter-rouge">O</code> &gt; <code class="language-plaintext highlighter-rouge">O</code>로 태깅되어 있던 시퀀스에서 첫 번째 <code class="language-plaintext highlighter-rouge">O</code> 태그가 <strong>Weak Label Completion</strong> 과정에 의해 수정되면서 <code class="language-plaintext highlighter-rouge">B-ProductType</code> &gt; <code class="language-plaintext highlighter-rouge">I-Color</code> &gt; <code class="language-plaintext highlighter-rouge">O</code>로 깨져버리는 경우죠.</li> <li>저자들은 이러한 경우가 E-commerce English query 데이터의 1.39% 있었다고 말하고, 이 경우를 학습에서 제외하는 실험도 진행했습니다. 그 결과 F1 score 기준, Stage 2에서는 +1.07의 향상이 있었지만 마지막 Stage 3에서 -0.18의 성능 저하가 있었다고 밝힙니다.</li> <li>이 결과 굳이 해당 샘플들을 제거하는 과정은 필요없다고 결론짓고 있습니다.</li> </ul> </li> <li> <strong>Quantify the Impace of Weak Labels</strong> <ul> <li>여기에서는 구체적인 비교를 통해 weak label을 대하는 NEEDLE 프레임워크의 효용성을 밝힙니다.</li> <li>Stage 2의 Initial model은 2384개의 예측 오류를 가지는데, NEEDLE 프레임워크 종료 시점에는 이 중 454개의 오류가 해결되고 새로운 오류가 311개 추가됩니다. 여기에는 weak label만의 영향만 있는게 아니기 때문에 weak label에 대해서만으로 추리면 각각 171개, 93개로 관찰됩니다.</li> <li>이 비율이 즉, <strong>“weak label을 바로 잡는 비율” = “NEEDLE이 바로 잡은 샘플 수” : “NEEDLE이 추가로 범한 예측 오류” = 171 : 93</strong>으로 그 비율이 \(171/93 = 1.84 &gt; 1\)로 영향이 적지 않고 NEEDLE이 weak label에 효용성이 있다고 말하고 있습니다.</li> </ul> </li> </ul> <p><br></p> <hr> <p><br></p> <h2 id="5-discussion-and-conclusion">5. Discussion and Conclusion</h2> <p>본 연구는 fully weakly supervised 방식, semi-supervised 방식과 모두 연관성이 있습니다. 각각 weakly labeled data를 사용한다는 점, 전체 데이터셋 중 일부만 레이블이 할당되어 있다는 점에서 말이죠.</p> <p>Fully weakly supervised NER 방식이 fully supervised 방식에 비해 성능이 떨어짐을 꼬집고 fully weakly supervised 방식은 실제 애플리케이션에는 적합하지 않은 방식이며 반면에 Semi-supervised 방식은 <strong>weak supervision</strong>을 활용하지 않아 부분적으로만 성능을 끌어올릴 수 있다고 볼 수 있습니다.</p> <p>이전의 fully weakly supervised 방식의 연구들은 weak labels에 strong labels를 단순하게 섞어버려 학습하는데 이를 NEEDLE 프레임워크에서는 <strong>weak labels의 노이즈를 억제하는 방식으로 완화</strong>하고 있죠.</p> <p>그런 의미에서 본 연구는 supervised NER과 weakly supervised NER을 연결하는 다리와 같은 연구라고 볼 수 있습니다.</p> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

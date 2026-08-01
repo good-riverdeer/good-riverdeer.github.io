@@ -1,0 +1,469 @@
+<!DOCTYPE html> <html lang="kr"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> TFRecord 파일 읽고 쓰기 | Geonsik Youn </title> <meta name="author" content="Geonsik Youn"> <meta name="description" content="TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리"> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%92%BB&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=b7e280e57e2bc547c94fb59c914ff711"> <link rel="canonical" href="https://good-riverdeer.github.io/blog/2021/tfrecord/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Geonsik</span> Youn </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">TFRecord 파일 읽고 쓰기</h1> <p class="post-meta"> Created on May 29, 2021 </p> <p class="post-tags"> <a href="/blog/2021"> <i class="fa-solid fa-calendar fa-sm"></i> 2021 </a>   ·   <a href="/blog/tag/tensorflow"> <i class="fa-solid fa-hashtag fa-sm"></i> tensorflow</a>   <a href="/blog/tag/tfrecord"> <i class="fa-solid fa-hashtag fa-sm"></i> tfrecord</a>   <a href="/blog/tag/data-loader"> <i class="fa-solid fa-hashtag fa-sm"></i> data_loader</a>   ·   <a href="/blog/category/project-review"> <i class="fa-solid fa-tag fa-sm"></i> project-review</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p>학부 졸업 프로젝트를 수행하며 tensorflow를 통해 딥러닝 모델을 구현하던 중 tensorflow의 학습 데이터 포맷인 tfrecord라는 파일을 만날 수 있었습니다. 딥러닝 모델의 구현을 위해 github을 뒤져보던 중 <code class="language-plaintext highlighter-rouge">*.tfrecord</code>라는 새로운 파일 확장자를 만났고, 용량도 별로 되지 않는 것이 모든 데이터를 담고 있다는 것을 보니 머릿속에 “다뤄야 한다”라는 생각이 들었습니다.</p> <p>그렇다면 tfrecord 파일 포맷은 무엇인가??</p> <h2 id="tfrecord">tfrecord</h2> <blockquote class="block-tip"> <p>tfrecord 파일은 tensorflow의 학습 데이터 등을 저장하기 위한 바이너리 데이터 포맷으로, 구글의 protocol buffer 포맷으로 데이터를 파일에 serialize하여 저장하게 됩니다.</p> </blockquote> <ul> <li> <code class="language-plaintext highlighter-rouge">tfrecord</code> 파일의 필요성은 아래와 같습니다. (from. <a href="https://bcho.tistory.com/1190" rel="external nofollow noopener" target="_blank">조대협님의 블로그</a>) <ol> <li>csv파일에서와 같이 숫자나 텍스트 데이터를 읽을 때는 크게 지장이 없지만, 이미지 데이터를 읽을 경우 이미지는 jpeg나 png 형태의 파일로 저장되어 있고 이에 대한 메타데이터와 레이블은 <strong>별도의 파일</strong>에 저장되어 있기 때문에, 학습 데이터를 읽을 때 메타데이터나 레이블 파일 하나만 읽는 것이 아니라 이미지 파일도 별도로 읽어야 하기 때문에 코드가 복잡해진다.</li> <li>이미지를 jpg난 png 포맷으로 읽어서 매번 디코딩을 하게되면, 그 성능이 저하되서 학습단계에서 데이터를 읽는 부분에서 많은 성능 저하가 발생한다.</li> </ol> </li> </ul> <p>이는 저 역시도 딥러닝을 공부하고 모델을 돌려보면서 많이 느꼈던 애로사항입니다. 좋은 하드웨어를 구하지 못해서 구글의 colab 환경을 많이 사용했는데, 데이터를 구글 드라이브에 옮기는 시간은 물론이고 이를 다시 학습 환경으로 가져오는 시간도 길어지는 경우가 종종 있었습니다.</p> <h2 id="tfrecord-파일-생성">tfrecord 파일 생성</h2> <p>아래의 내용은 <a href="https://www.tensorflow.org/tutorials/load_data/tfrecord" rel="external nofollow noopener" target="_blank">tensorflow 공식문서</a>와 ‘peteryuX’님의 <a href="https://github.com/peteryuX/arcface-tf2" rel="external nofollow noopener" target="_blank">얼굴인식 github 레포지토리</a>를 참고했습니다.</p> <p>tfrecord 파일 생성은 기록하고자 하는 데이터의 feature들을 python dictionary 형태로 정의한 후, 데이터 하나씩 <code class="language-plaintext highlighter-rouge">tf.train.Example</code> 객체로 만들어 <code class="language-plaintext highlighter-rouge">tf.io.TFRecordWriter</code>를 통해 파일로 저장합니다.</p> <h3 id="1-데이터-변환">1. 데이터 변환</h3> <p>tensorflow 공식문서에 따르면 <code class="language-plaintext highlighter-rouge">tf.train.Example</code> 객체는 아래와 같은 유형의 데이터 타입을 담을 수 있습니다.</p> <ol> <li> <code class="language-plaintext highlighter-rouge">tf.train.BytesList</code> <ul> <li><code class="language-plaintext highlighter-rouge">string</code></li> <li><code class="language-plaintext highlighter-rouge">byte</code></li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">tf.train.FloatList</code> <ul> <li> <code class="language-plaintext highlighter-rouge">float</code> (<code class="language-plaintext highlighter-rouge">float32</code>)</li> <li> <code class="language-plaintext highlighter-rouge">double</code> (<code class="language-plaintext highlighter-rouge">float64</code>)</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">tf.train.Int64List</code> <ul> <li><code class="language-plaintext highlighter-rouge">bool</code></li> <li><code class="language-plaintext highlighter-rouge">enum</code></li> <li><code class="language-plaintext highlighter-rouge">int32</code></li> <li><code class="language-plaintext highlighter-rouge">uint32</code></li> <li><code class="language-plaintext highlighter-rouge">int64</code></li> <li><code class="language-plaintext highlighter-rouge">uint64</code></li> </ul> </li> </ol> <p>기록하고자하는 데이터의 타입에 따라 아래와 같은 변환 함수를 사용해 데이터를 기록할 수 있습니다. 예를 들어 문자열 타입의 데이터는 <code class="language-plaintext highlighter-rouge">tf.train.BytesList</code>의 객체로 기록하는 것이죠.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># The following functions can be used to convert a value to a type compatible
+# with tf.train.Example.
+</span>
+<span class="k">def</span> <span class="nf">_bytes_feature</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Returns a bytes_list from a string / byte.</span><span class="sh">"""</span>
+    <span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nf">type</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="nf">constant</span><span class="p">(</span><span class="mi">0</span><span class="p">))):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">.</span><span class="nf">numpy</span><span class="p">()</span> <span class="c1"># BytesList won't unpack a string from an EagerTensor.
+</span>    <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Feature</span><span class="p">(</span><span class="n">bytes_list</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">BytesList</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="n">value</span><span class="p">]))</span>
+
+<span class="k">def</span> <span class="nf">_float_feature</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Returns a float_list from a float / double.</span><span class="sh">"""</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Feature</span><span class="p">(</span><span class="n">float_list</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">FloatList</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="n">value</span><span class="p">]))</span>
+
+<span class="k">def</span> <span class="nf">_int64_feature</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Returns an int64_list from a bool / enum / int / uint.</span><span class="sh">"""</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Feature</span><span class="p">(</span><span class="n">int64_list</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Int64List</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="n">value</span><span class="p">]))</span>
+</code></pre></div></div> <h3 id="2-tftrainexample-객체로-저장">2. tf.train.Example 객체로 저장</h3> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">make_example</span><span class="p">(</span><span class="n">img_str</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="c1"># Create a dictionary with features that may be relevant.
+</span>    <span class="n">feature</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">image/source_id</span><span class="sh">'</span><span class="p">:</span> <span class="nf">_int64_feature</span><span class="p">(</span><span class="n">source_id</span><span class="p">),</span>
+               <span class="sh">'</span><span class="s">image/filename</span><span class="sh">'</span><span class="p">:</span> <span class="nf">_bytes_feature</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span>
+               <span class="sh">'</span><span class="s">image/encoded</span><span class="sh">'</span><span class="p">:</span> <span class="nf">_bytes_feature</span><span class="p">(</span><span class="n">img_str</span><span class="p">)}</span>
+
+    <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Example</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Features</span><span class="p">(</span><span class="n">feature</span><span class="o">=</span><span class="n">feature</span><span class="p">))</span>
+</code></pre></div></div> <p>기록할 데이터들을 python dictionary 형태로 묶어 tf.train.Example 객체로 변환합니다. 위 예제코드에서는 얼굴인식을 위한 데이터를 저장하는 것인데, 각각 <code class="language-plaintext highlighter-rouge">source_id</code>는 클래스 ID를, <code class="language-plaintext highlighter-rouge">filename</code>은 이미지 파일의 이름, <code class="language-plaintext highlighter-rouge">encoded</code>는 이미지 파일 자체를 의미합니다.</p> <h3 id="3-tfiotfrecordwriter로-파일-생성">3. tf.io.TFRecordWriter로 파일 생성</h3> <p>원본 데이터의 디렉토리 구조는 아래와 같이 일반적인 Classification 데이터의 구조를 가진다고 하겠습니다.</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+|-- 0
+|   |-- ****.jpg
+|   |-- ****.jpg
+|   |-- ...
+|
+|-- 1
+|   |-- ****.jpg
+|   |-- ***.jpg
+|   |-- ...
+|
+|-- 2
+|   |-- ****.jpg
+|   |-- ...
+...
+</code></pre></div></div> <p>아래는 위 디렉토리 구조에서 파일의 이름을 입력받아 tfrecord 파일을 생성하는 코드입니다. <code class="language-plaintext highlighter-rouge">0, 1, 2, ...</code>의 디렉토리 이름을 클래스 ID로 하고 차례로 <code class="language-plaintext highlighter-rouge">sample</code> python list에 담아 하나씩 저장합니다. 그 다음 list에 담은 샘플들을 섞고 다시 차례로 <code class="language-plaintext highlighter-rouge">*.tfrecord</code> 파일에 적습니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Reading data list...</span><span class="sh">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">id_name</span> <span class="ow">in</span> <span class="nf">tqdm</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="nf">listdir</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)):</span>
+        <span class="n">img_paths</span> <span class="o">=</span> <span class="nf">glob</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">id_name</span><span class="p">,</span> <span class="sh">'</span><span class="s">*.jpg</span><span class="sh">'</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">img_path</span> <span class="ow">in</span> <span class="n">img_paths</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">id_name</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">basename</span><span class="p">(</span><span class="n">img_path</span><span class="p">))</span>
+            <span class="n">samples</span><span class="p">.</span><span class="nf">append</span><span class="p">((</span><span class="n">img_path</span><span class="p">,</span> <span class="n">id_name</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+    <span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Writing tfrecord file...</span><span class="sh">"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">TFRecordWriter</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">id_name</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nf">tqdm</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+            <span class="n">tf_example</span> <span class="o">=</span> <span class="nf">make_example</span><span class="p">(</span><span class="n">img_str</span><span class="o">=</span><span class="nf">open</span><span class="p">(</span><span class="n">img_path</span><span class="p">,</span> <span class="sh">'</span><span class="s">rb</span><span class="sh">'</span><span class="p">).</span><span class="nf">read</span><span class="p">(),</span>
+                                      <span class="n">source_id</span><span class="o">=</span><span class="nf">int</span><span class="p">(</span><span class="n">id_name</span><span class="p">),</span>
+                                      <span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="n">writer</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">tf_example</span><span class="p">.</span><span class="nc">SerializeToString</span><span class="p">())</span>
+</code></pre></div></div> <p>회귀 문제에 대한 <code class="language-plaintext highlighter-rouge">tfrecord</code> 파일 생성 예제를 하나 더 보면 좋을 것 같습니다.</p> <p>회귀 문제에 대한 label은 <code class="language-plaintext highlighter-rouge">.csv</code>나 <code class="language-plaintext highlighter-rouge">.txt</code> 같은 별도의 파일에 저장하는 경우가 많습니다. 아래는 이미지 파일명과 그 label 값을 함께 적어놓은 <code class="language-plaintext highlighter-rouge">.csv</code> 파일의 예시입니다.</p> <div file="metadata.csv" class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>filename,label
+0000971160_1, 6.094467065223975
+0000971160_2, -8.213548899809783
+0000971160_3, -16.811467943863377
+0000971160_4, -0.44434946696166655
+0000971160_5, -26.681545004531852
+0000971160_6, 17.006392102458875
+0000971160_7, -18.696981688745513
+0000971160_8, 16.358331838072285
+</code></pre></div></div> <p>위와 같이 저장된 파일도 같은 방식으로 <code class="language-plaintext highlighter-rouge">tfrecord</code> 파일로 저장할 수 있습니다. 달라진 점이라면 메타데이터에서 정보를 가져와 활용한다는 것과 그에 맞는 label의 type에 맞게 <code class="language-plaintext highlighter-rouge">make_example</code>을 조정했다는 점입니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">make_example</span><span class="p">(</span><span class="n">img_str</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="n">feature</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">encoded</span><span class="sh">'</span><span class="p">:</span> <span class="nf">_bytes_feature</span><span class="p">(</span><span class="n">img_str</span><span class="p">),</span>
+               <span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">:</span> <span class="nf">_float_feature</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
+               <span class="sh">'</span><span class="s">filename</span><span class="sh">'</span><span class="p">:</span> <span class="nf">_bytes_feature</span><span class="p">(</span><span class="n">filename</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Example</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="nc">Features</span><span class="p">(</span><span class="n">feature</span><span class="o">=</span><span class="n">feature</span><span class="p">))</span>
+    
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s">/metadata.csv</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">.</span><span class="nf">readline</span><span class="p">()</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">readlines</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nf">tqdm</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="n">filename</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">line</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="s">,</span><span class="sh">'</span><span class="p">)</span>
+            <span class="n">img_path</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="s">_</span><span class="sh">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s">.png</span><span class="sh">"</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="nf">float</span><span class="p">(</span><span class="n">label</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">'</span><span class="se">\n</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>
+
+            <span class="n">samples</span><span class="p">.</span><span class="nf">append</span><span class="p">((</span><span class="n">img_path</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+    <span class="n">random</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">tf</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">TFRecordWriter</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nf">tqdm</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+            <span class="n">tf_example</span> <span class="o">=</span> <span class="nf">make_example</span><span class="p">(</span><span class="n">img_str</span><span class="o">=</span><span class="nf">open</span><span class="p">(</span><span class="n">img_path</span><span class="p">,</span> <span class="sh">'</span><span class="s">rb</span><span class="sh">'</span><span class="p">).</span><span class="nf">read</span><span class="p">(),</span>
+                                      <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                                          <span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">filename</span><span class="o">+</span><span class="sh">"</span><span class="s">.png</span><span class="sh">"</span><span class="p">))</span>
+            <span class="n">writer</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">tf_example</span><span class="p">.</span><span class="nc">SerializeToString</span><span class="p">())</span>
+</code></pre></div></div> <h2 id="tfrecord-파일-tfdatadataset으로-변환">tfrecord 파일 tf.data.Dataset으로 변환</h2> <p>이렇게 만든 tfrecord 파일을 읽는 방법 역시 간단합니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_parse_tfrecord</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">parse_tfrecord</span><span class="p">(</span><span class="n">tfrecord</span><span class="p">):</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">image/source_id</span><span class="sh">'</span><span class="p">:</span> <span class="n">tf</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">FixedLenFeature</span><span class="p">([],</span> <span class="n">tf</span><span class="p">.</span><span class="n">int64</span><span class="p">),</span>
+                    <span class="sh">'</span><span class="s">image/filename</span><span class="sh">'</span><span class="p">:</span> <span class="n">tf</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">FixedLenFeature</span><span class="p">([],</span> <span class="n">tf</span><span class="p">.</span><span class="n">string</span><span class="p">),</span>
+                    <span class="sh">'</span><span class="s">image/encoded</span><span class="sh">'</span><span class="p">:</span> <span class="n">tf</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">FixedLenFeature</span><span class="p">([],</span> <span class="n">tf</span><span class="p">.</span><span class="n">string</span><span class="p">)}</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nf">parse_single_example</span><span class="p">(</span><span class="n">tfrecord</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="nf">decode_jpeg</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="sh">'</span><span class="s">image/encoded</span><span class="sh">'</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">y_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="nf">cast</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="sh">'</span><span class="s">image/source_id</span><span class="sh">'</span><span class="p">],</span> <span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="nf">_transform_images</span><span class="p">()(</span><span class="n">x_train</span><span class="p">)</span>
+        <span class="n">y_train</span> <span class="o">=</span> <span class="nf">_transform_targets</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+        <span class="nf">return </span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span> <span class="n">y_train</span>
+    <span class="k">return</span> <span class="n">parse_tfrecord</span>
+
+
+<span class="k">def</span> <span class="nf">_transform_images</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">transform_images</span><span class="p">(</span><span class="n">x_train</span><span class="p">):</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="nf">resize</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="nf">random_crop</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="nf">random_flip_left_right</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="nf">random_saturation</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">)</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="nf">random_brightness</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">x_train</span> <span class="o">/</span> <span class="mi">255</span>
+        <span class="k">return</span> <span class="n">x_train</span>
+    <span class="k">return</span> <span class="n">transform_images</span>
+
+
+<span class="k">def</span> <span class="nf">_transform_targets</span><span class="p">(</span><span class="n">y_train</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">y_train</span>
+</code></pre></div></div> <p>기록한 <code class="language-plaintext highlighter-rouge">tfrecord</code> 파일을 입력받아 <code class="language-plaintext highlighter-rouge">tf.io.parse_single_example()</code>로 하나씩 풀어주면 됩니다. 이렇게 불러온 데이터를 사용하고자하는 모델에 맞게 전처리해주고 알맞은 형태의 return 값을 반환합니다.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">load_tfrecord_dataset</span><span class="p">(</span><span class="n">tfrecord_name</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">buffer_size</span><span class="o">=</span><span class="mi">10240</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">load dataset from tfrecord</span><span class="sh">"""</span>
+    <span class="n">raw_dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="nc">TFRecordDataset</span><span class="p">(</span><span class="n">tfrecord_name</span><span class="p">)</span>
+    <span class="n">raw_dataset</span> <span class="o">=</span> <span class="n">raw_dataset</span><span class="p">.</span><span class="nf">repeat</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="n">raw_dataset</span> <span class="o">=</span> <span class="n">raw_dataset</span><span class="p">.</span><span class="nf">shuffle</span><span class="p">(</span><span class="n">buffer_size</span><span class="o">=</span><span class="n">buffer_size</span><span class="p">)</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">raw_dataset</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span>
+        <span class="nf">_parse_tfrecord</span><span class="p">(),</span>
+        <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">experimental</span><span class="p">.</span><span class="n">AUTOTUNE</span>
+    <span class="p">)</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">.</span><span class="nf">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">.</span><span class="nf">prefetch</span><span class="p">(</span><span class="n">buffer_size</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">experimental</span><span class="p">.</span><span class="n">AUTOTUNE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataset</span>
+</code></pre></div></div> <p><code class="language-plaintext highlighter-rouge">tf.data.TFRecordDataset</code>의 객체를 생성해 <code class="language-plaintext highlighter-rouge">.map()</code>을 통해 앞서 정의한 변환과정을 적용해주면 데이터 사용 준비가 마무리됩니다.</p> <h2 id="tfrecord와-generator의-속도-비교">tfrecord와 Generator의 속도 비교</h2> <p>그렇다면 python generator를 사용한 tensorflow 데이터셋과 tfrecord를 사용한 tensorflow 데이터셋의 시간 차이를 살펴보겠습니다.</p> <p>colab 환경에서 진행했고 위에서 소개한 classification 문제에 대한 데이터셋을 비교에 사용했습니다. 총 이미지 수는 9360장, 클래스의 종류는 390가지입니다.</p> <p><img src="https://velog.velcdn.com/images%2Friverdeer%2Fpost%2Fc4afc298-1f1e-45f6-8d10-42903d86730d%2Fimage.png" alt="image-description"></p> <p>왼쪽은 tfrecord를 사용한 시간으로 5초 남짓 소요되었지만, 오른쪽 Generator를 통해 디렉토리에서 직접 데이터를 가져오는 방식은 90분 정도의 어마어마한 차이를 보였습니다.</p> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Geonsik Youn. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "AI/LLM 프로젝트 상세 기록",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-paper-review-scribble-supervised-lidar-semantic-segmentation",
+        
+          title: "[paper-review] Scribble-Supervised LiDAR Semantic Segmentation",
+        
+        description: "ScribbleKitti 논문 리뷰: Scribble 기반 LiDAR Semantic Segmentation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/scribblekitti/";
+          
+        },
+      },{id: "post-paper-review-denoising-diffusion-probabilistic-models",
+        
+          title: "[paper-review] Denoising diffusion probabilistic models",
+        
+        description: "DDPM 논문 리뷰: Denoising Diffusion Probabilistic Models",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/ddpm/";
+          
+        },
+      },{id: "post-paper-review-image-to-lidar-self-supervised-distillation-for-autonomous-driving-data",
+        
+          title: "[paper-review] Image-to-Lidar Self-Supervised Distillation for Autonomous Driving Data",
+        
+        description: "SLidR 논문 리뷰: 자율주행 데이터를 위한 Image-to-LiDAR Self-Supervised Distillation",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/slidr/";
+          
+        },
+      },{id: "post-paper-review-named-entity-recognition-with-small-strongly-labeled-and-large-weakly-labeled-data",
+        
+          title: "[paper-review] Named Entity Recognition with Small Strongly Labeled and Large Weakly Labeled Data...",
+        
+        description: "NEEDLE 논문 리뷰: 소량의 강한 레이블과 다량의 약한 레이블을 활용한 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/needle/";
+          
+        },
+      },{id: "post-paper-review-tebner-domain-specific-named-entity-recognition-with-type-expanded-boundary-aware-network",
+        
+          title: "[paper-review] TEBNER: Domain Specific Named Entity Recognition with Type Expanded Boundary-aware Network.",
+        
+        description: "TEBNER 논문 리뷰: Type Expanded Boundary-aware Network 기반 도메인 특화 개체명 인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2022/tebner/";
+          
+        },
+      },{id: "post-paper-review-donut-document-understanding-transformer-without-ocr",
+        
+          title: "[paper-review] Donut: Document Understanding Transformer without OCR",
+        
+        description: "Donut 논문 리뷰: OCR 없이 문서를 이해하는 Document Understanding Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/donut/";
+          
+        },
+      },{id: "post-paper-review-docformer-end-to-end-transformer-for-document-understanding",
+        
+          title: "[paper-review] DocFormer: End-to-End Transformer for Document Understanding",
+        
+        description: "DocFormer 논문 리뷰: 문서 이해를 위한 End-to-End Transformer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/docformer/";
+          
+        },
+      },{id: "post-paper-review-learning-to-understand-traffic-signs",
+        
+          title: "[paper-review] Learning to Understand Traffic Signs",
+        
+        description: "Learning to Understand Traffic Signs 논문 리뷰",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/learning-to-understand-traffic-signs/";
+          
+        },
+      },{id: "post-paper-review-mask-textspotter-v3-segmentation-proposal-network-for-robust-scene-text-spotting",
+        
+          title: "[paper-review] Mask TextSpotter v3: Segmentation Proposal Network for Robust Scene Text Spotting",
+        
+        description: "Mask TextSpotter v3 논문 리뷰: Segmentation Proposal Network 기반 장면 텍스트 검출/인식",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/mask-textspotter/";
+          
+        },
+      },{id: "post-paper-review-efficientnet-rethinking-model-scaling-for-convolutional-neural-networks",
+        
+          title: "[paper-review] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+        
+        description: "EfficientNet 논문 리뷰: Compound Scaling으로 CNN을 효율적으로 확장하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/efficientnet/";
+          
+        },
+      },{id: "post-project-review-arcface를-활용한-한국인-안면-인식",
+        
+          title: "[project-review] ArcFace를 활용한 한국인 안면 인식",
+        
+        description: "ArcFace를 활용한 한국인 안면 인식 프로젝트 회고",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/arcface-project/";
+          
+        },
+      },{id: "post-paper-review-swin-transformer-hierarchical-vision-transformer-using-shifted-windows",
+        
+          title: "[paper-review] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+        
+        description: "Swin Transformer 논문 리뷰: Shifted Window 기반 계층적 비전 트랜스포머",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/swin-transformer/";
+          
+        },
+      },{id: "post-paper-review-an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale",
+        
+          title: "[paper-review] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale...",
+        
+        description: "Vision Transformer(ViT) 논문 리뷰: 이미지를 패치 시퀀스로 다뤄 Transformer로 이미지 분류를 수행하는 방법",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/vision-transformer/";
+          
+        },
+      },{id: "post-tfrecord-파일-읽고-쓰기",
+        
+          title: "TFRecord 파일 읽고 쓰기",
+        
+        description: "TensorFlow의 TFRecord 포맷으로 데이터를 읽고 쓰는 방법 정리",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2021/tfrecord/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-arcface를-활용한-한국인-안면-인식",
+          title: 'ArcFace를 활용한 한국인 안면 인식',
+          description: "K-Face 데이터로 미세조정한 ArcFace 기반 임베딩 모델과 이를 활용한 비대면 본인인증 시스템",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/10_arcface-korean-face-recognition/";
+            },},{id: "projects-제-6회-인천광역시-공공데이터-활용-창업-분석-경진대회",
+          title: '제 6회 인천광역시 공공데이터 활용 창업, 분석 경진대회',
+          description: "CatBoost 회귀모델로 공공자전거 대여소 이용자 수를 예측해 인천시 신규 대여소 후보지를 도출",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/11_incheon-public-bike-demand/";
+            },},{id: "projects-해외출장-정산-증빙-대사-에이전트-개발",
+          title: '해외출장 정산 증빙 대사 에이전트 개발',
+          description: "항공비·숙박비·통신비 등 해외출장 비용 증빙을 사규 문맥과 대조해 자동으로 대사하는 LLM 에이전트",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_overseas-trip-expense-agent/";
+            },},{id: "projects-통신비-증빙-대사-자동화",
+          title: '통신비 증빙 대사 자동화',
+          description: "OCR과 LLM으로 통신 3사·알뜰폰 요금명세서를 읽어 월 5,000여 건의 통신비 지원 육안 검수를 자동화",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_phone-bill-reconciliation-automation/";
+            },},{id: "projects-장소-추천-서비스-기술-개발",
+          title: '장소 추천 서비스 기술 개발',
+          description: "차량 내비게이션을 위한 메타패스·방문이력·방문의도 기반 POI 추천 모델 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_poi-recommendation-navigation/";
+            },},{id: "projects-생성형-ai-기반-개발자-생산성-향상-ai-code-assistant-poc",
+          title: '생성형 AI 기반 개발자 생산성 향상 AI Code Assistant PoC',
+          description: "사내 코드베이스로 파인튜닝한 CodeLlama 기반 코드 어시스턴트 효용성 검증 PoC",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_ai-code-assistant-poc/";
+            },},{id: "projects-차량-사용설명서-q-amp-a-챗봇-mvp-개발",
+          title: '차량 사용설명서 Q&amp;A 챗봇 MVP 개발',
+          description: "LangChain·Milvus·Streamlit 기반 RAG로 구성한 현대·기아 차량 사용설명서 질의응답 챗봇 MVP",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_vehicle-manual-qa-chatbot/";
+            },},{id: "projects-정밀지도-라이브-업데이트-기술-개발",
+          title: '정밀지도 라이브 업데이트 기술 개발',
+          description: "3D Segmentation 기반 도로 객체 추출과 Metric Learning 기반 자동 검수로 정밀지도 구축 파이프라인을 개선",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_hd-map-live-update/";
+            },},{id: "projects-정신-건강관리를-위한-4ir-기반-비대면-실버-헬스케어-플랫폼-기술-개발-실증",
+          title: '정신 건강관리를 위한 4IR 기반 비대면 실버 헬스케어 플랫폼 기술 개발 실증',
+          description: "실시간 간병 신청 접수 챗봇을 위한 KoBERT·CRF 기반 병명 인식 모듈 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_silver-healthcare-chatbot/";
+            },},{id: "projects-재고-탐색과-인식이-가능한-인공지능-드론을-활용한-재고-관리-플랫폼",
+          title: '재고 탐색과 인식이 가능한 인공지능 드론을 활용한 재고 관리 플랫폼',
+          description: "드론 촬영 이미지 내 QR코드 세그멘테이션 기반 탐지·인식 및 3D 위치 추정 알고리즘 연구 개발",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_drone-inventory-management/";
+            },},{id: "projects-자동-문서-분류-및-챗봇-기반-rpa-서비스를-제공하는-통합지식관리플랫폼-개발",
+          title: '자동 문서 분류 및 챗봇 기반 RPA 서비스를 제공하는 통합지식관리플랫폼 개발',
+          description: "문서 이미지 기울기 보정 앙상블, UNet 기반 문자 영역 검출, MixUp 기반 개체명 인식(NER)까지 이어지는 문서 자동화 파이프라인",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_document-rpa-platform/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%72%69%76%65%72%64%65%65%72.%79%6F%75%6E@%67%6D%61%69%6C.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/good-riverdeer", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

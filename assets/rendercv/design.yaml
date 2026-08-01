@@ -5,3 +5,21 @@ design:
     size: a4
     show_footer: false
     show_top_note: false
+    top_margin: 2cm
+    bottom_margin: 2cm
+    left_margin: 2cm
+    right_margin: 2cm
+  typography:
+    font_family: Noto Sans KR
+    font_size:
+      body: 10pt
+  header:
+    space_below_name: 0.7cm
+    space_below_headline: 0.7cm
+    space_below_connections: 0.7cm
+  section_titles:
+    space_above: 0.5cm
+    space_below: 0.3cm
+  sections:
+    space_between_regular_entries: 1.2em
+    space_between_text_based_entries: 0.3em

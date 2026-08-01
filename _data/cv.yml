@@ -1,189 +1,141 @@
 cv:
-  name: Albert Einstein
-  label: Scientist
-  email: einstein@example.com
-  location: Princeton, NJ
-  image: ""
-  summary: A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time
+  name: Geonsik Youn, 윤건식
+  headline: AI Engineer
+  email: riverdeer.youn@gmail.com
+  location: Seoul, South Korea
 
   social_networks:
-    - network: X
-      username: AlbertEinstein
     - network: GitHub
-      username: example
-    - network: LinkedIn
-      username: example
-
-  address:
-    street: 2712 Broadway St
-    city: San Francisco
-    region: California
-    postalCode: CA 94115
-    countryCode: US
+      username: good-riverdeer
 
   sections:
-    Education:
-      - institution: University of Zurich
-        location: Zurich, Switzerland
-        url: https://www.uzh.ch/
-        area: Physics
-        studyType: PhD
-        start_date: 1900
-        end_date: 1905
-        score: ""
-        courses: "Theory of Relativity"
-        highlights:
-          - Description 1.
-          - Description 2.
+    Summary:
+      - bullet: LLM 에이전트와 RAG로 사내 정산·감사 업무를 자동화하는 AI Engineer입니다. 산업시스템공학(학·석사) 배경으로, 모델 성능보다 업무 흐름 위에 LLM을 어디에 배치하는지에 집중합니다.
 
-      - institution: Eidgenössische Technische Hochschule
-        location: Zurich, Switzerland
-        area: Physics
-        studyType: Federal teaching diploma
-        start_date: 1896
-        end_date: 1900
-        highlights:
-          - Description 1.
-          - Description 2.
+    Education:
+      - institution: Dongguk University Graduate School
+        location: Seoul, South Korea
+        area: Industrial & Systems Engineering
+        degree: MS
+        start_date: 2021-09
+        end_date: 2023-02
+        summary: "GPA 4.5/4.5"
+
+      - institution: Dongguk University
+        location: Seoul, South Korea
+        area: Industrial & Systems Engineering (double major, Software Convergence)
+        degree: BS
+        start_date: 2016-03
+        end_date: 2021-08
+        summary: "GPA 4.06/4.5"
 
     Experience:
-      - company: Institute for Advanced Study, Princeton University
-        position: Professor of Theoretical Physics
-        location: Princeton University, NJ
-        start_date: 1933
-        end_date: 1955
-        summary: Teaching at Palmer Physical Laboratory (now 302 Frist Campus Center). While not a professor at Princeton, I associated with the physics professors and continued to give lectures on campus.
+      - company: Hyundai AutoEver
+        position: AI Engineer, Vision AI Tech Team
+        location: Seoul, South Korea
+        start_date: 2025-04
+        end_date: present
+        summary: Design, build, and operate LLM agent-based automation for internal expense audit workflows.
         highlights:
-          - Relativity
-          - Description 2.
+          - LLM 에이전트 기반 사내 비용 정산·감사 자동화 시스템 설계·개발·운영 (하단 Projects 참고)
+          - Langfuse 자체 호스팅 및 보안 인증 게이트웨이 구축
+          - GPU 모델 서빙 플랫폼(Nvidia Run:ai, vLLM) 운영
 
-      - company: California Institute of Technology
-        position: Visiting Professor
-        location: Pasadena, California, US
-        start_date: 1933
-        end_date: 1933
+      - company: Hyundai AutoEver
+        position: AI Engineer, Data Service Development Team
+        location: Seoul, South Korea
+        start_date: 2024-07
+        end_date: 2025-03
         highlights:
-          - Description 1.
-          - Description 2.
+          - 차량 내비게이션 사용자 개인화 서비스 기술 기획 및 개발
+          - 차량 인포테인먼트 빅데이터 수집 및 관련 서비스 기획 및 개발
 
-      - company: Kaiser Wilhelm Institute for Physics
-        position: Director
-        location: Berlin, Germany
-        start_date: 1917
-        end_date: 1933
-
-      - company: Karl-Ferdinand University
-        position: Professor of Theoretical Physics
-        location: Prague, Czechoslovakia
-        start_date: 1911
-        end_date: 1917
-
-      - company: University of Zurich
-        position: Associate Professor of Theoretical Physics
-        location: Zurich, Switzerland
-        start_date: 1909
-        end_date: 1911
-
-    Volunteer:
-      - company: People's Climate March
-        position: Lead Organizer
-        location: Zurich, Switzerland
-        start_date: 2014-04-01
-        end_date: 2015-07-01
-        summary: Lead organizer for the New York City branch of the People's Climate March, the largest climate march in history.
+      - company: Hyundai AutoEver
+        position: AI Engineer, AI Technology Team
+        location: Seoul, South Korea
+        start_date: 2023-01
+        end_date: 2024-06
         highlights:
-          - "Awarded 'Climate Hero' award by Greenpeace for my efforts organizing the march."
-          - "Men of the year 2014 by Time magazine"
+          - AI 전략 및 R&D 로드맵 - 전사 AI 선행 주제발굴 및 적용 로드맵 구성
+          - AI 기술 교육 및 컨설팅 - AI 기반 사업 수행을 위한 사업부 기술기반 사업 공동 수행
 
-    Awards:
-      - title: Nobel Prize in Physics
-        authors:
-          - "Royal Swedish Academy of Sciences"
-        date: 1921-11-01
-        awarder: Royal Swedish Academy of Sciences
-        url: https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/
-        summary: The Nobel Prizes are five separate prizes that, according to Alfred Nobel's will of 1895, are awarded to 'those who, during the preceding year, have conferred the greatest benefit to humankind.'
+    Projects:
+      - name: 해외출장 정산 증빙 대사 에이전트 개발
+        summary: 현대오토에버 · 기여도 40%
+        highlights:
+          - LangGraph로 증빙 분류·항목 추출·사규 대조·판정 근거 생성 파이프라인 설계, FastAPI/Kubernetes/ArgoCD로 배포
+          - 실제 해외출장 정산 200여 건 대상 95% 대사 정확도 달성
+        start_date: 2026-01
+        end_date: present
 
-      - title: Max Planck Medal
-        authors:
-          - "German Physical Society"
-        date: 2029
-        awarder: German Physical Society
-        summary: Awarded for outstanding scientific achievement
+      - name: 통신비 증빙 대사 자동화
+        summary: 현대오토에버 · 기여도 80%
+        highlights:
+          - OCR + LLM 기반 정보 추출로 월 5,000여 건 100% 육안 검수 업무 자동화
+          - FastAPI + Airflow 배치 처리 아키텍처 설계
+        start_date: 2025-04
+        end_date: 2025-12
 
     Publications:
-      - title: Zur Elektrodynamik bewegter Körper
+      - title: Mixup Based Cross-Consistency Training for Named Entity Recognition
         authors:
-          - Albert Einstein
-        publisher: Annalen der Physik
-        releaseDate: 1905-06-30
-        url: https://en.wikisource.org/wiki/Translation:On_the_Electrodynamics_of_Moving_Bodies
-        summary: It concerned an interpretation of the Michelson–Morley experiment and the properties of light and time. Special relativity incorporates the principle that the speed of light is the same for all inertial observers regardless of the state of motion of the source.
+          - Youn, G.
+          - Yoon, B.
+          - Ji, S.
+          - Ko, D.
+          - Rhee, J.
+        journal: Applied Sciences
+        publisher: Applied Sciences
+        summary: "12(21), 11084"
+        date: 2022-01-01
 
-      - title: Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt
+      - title: Proxy-based Metric Learning for Emotion Recognition
         authors:
-          - Albert Einstein
-        publisher: Annalen der Physik
-        releaseDate: 1905-03-18
-        url: https://de.wikisource.org/wiki/Über_einen_die_Erzeugung_und_Verwandlung_des_Lichtes_betreffenden_heuristischen_Gesichtspunkt
-        summary: In the second paper, he applied the quantum theory to light to explain the photoelectric effect. In particular, he used the idea of light quanta (photons) to explain experimental results, but stressed the importance of the experimental results. The importance of his work on the photoelectric effect earned him the Nobel Prize in Physics in 1921.
+          - Park, J.
+          - Youn, G.
+          - Yoon, B.
+          - Kim, B.
+          - Rhee, J.
+        journal: Proceedings of the 6th International Conference on Advances in Artificial Intelligence
+        publisher: Proceedings of the 6th International Conference on Advances in Artificial Intelligence
+        summary: "pp. 121-125"
+        date: 2022-10-01
 
-      - title: Die Grundlage der allgemeinen Relativitätstheorie
+      - title: 3D position estimation of drone and object based on QR code segmentation model for inventory management automation
         authors:
-          - Albert Einstein
-        publisher: Annalen der Physik
-        releaseDate: 1916-03-20
-        url: https://de.wikisource.org/wiki/Die_Grundlage_der_allgemeinen_Relativitätstheorie
-        summary: The publication of the theory of general relativity made him internationally famous. He was professor of physics at the universities of Zurich (1909–1911) and Prague (1911–1912), before he returned to ETH Zurich (1912–1914).
+          - Yoon, B.
+          - Kim, H.
+          - Youn, G.
+          - Rhee, J.
+        journal: 2021 IEEE International Symposium on Safety, Security, and Rescue Robotics (SSRR)
+        publisher: 2021 IEEE International Symposium on Safety, Security, and Rescue Robotics (SSRR)
+        summary: "pp. 223-229, IEEE"
+        date: 2021-10-01
+
+    Awards:
+      - name: 대상, 2021년 비대면시대의 인공지능 챌린지
+        title: 대상, 2021년 비대면시대의 인공지능 챌린지
+        date: 2021-12-01
+        summary: ArcFace 기반 비대면 본인인증 시스템 제안
+
+      - name: 우수상 (빅데이터·아이디어 기획 부문), 제 6회 인천광역시 공공데이터 활용 창업·분석 경진대회
+        title: 우수상 (빅데이터·아이디어 기획 부문), 제 6회 인천광역시 공공데이터 활용 창업·분석 경진대회
+        date: 2020-09-01
+        summary: 공공자전거 대여소 후보군 도출 모델링
 
     Skills:
-      - name: Physics
-        level: Master
-        icon: fa-solid fa-hashtag
-        keywords: "Quantum Mechanics, Quantum Computing, Quantum Information, Quantum Cryptography, Quantum Communication, Quantum Teleportation"
+      - name: Deep Learning & Machine Learning
+        summary: "PyTorch, TensorFlow"
+
+      - name: LLM & Agent Frameworks
+        summary: "LangChain, LangGraph, Pydantic AI"
+
+      - name: Infrastructure & Serving
+        summary: "FastAPI, Docker, Kubernetes, ArgoCD, Airflow, vLLM, Nvidia Run:ai"
 
     Languages:
-      - name: German
+      - name: Korean
         summary: "Native speaker"
 
       - name: English
-        summary: "Fluent"
-
-    Interests:
-      - name: Physics
-        icon: fa-solid fa-tag
-        keywords: "Quantum Mechanics, Quantum Computing, Quantum Information, Quantum Cryptography, Quantum Communication, Quantum Teleportation"
-
-    Certificates:
-      - name: Machine Learning
-        date: 2018-01-01
-        issuer: Stanford University
-        icon: fa-solid fa-location-dot
-
-      - name: Quantum Computing
-        date: 2018-01-01
-        issuer: Stanford University
-        icon: fa-solid fa-tag
-
-      - name: Quantum Information
-        date: 2018-01-01
-        issuer: Stanford University
-        icon: fa-solid fa-envelope
-
-    Projects:
-      - name: Quantum Computing
-        summary: Quantum computing is the use of quantum-mechanical phenomena such as superposition and entanglement to perform computation. Computers that perform quantum computations are known as quantum computers.
-        highlights:
-          - Quantum Teleportation
-          - Quantum Cryptography
-        start_date: 2018-01-01
-        end_date: 2018-01-01
-
-    References:
-      - name: Professor John Doe
-        icon: fa-solid fa-laptop
-        reference: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam condimentum, diam quis convallis euismod, arcu mi ullamcorper lorem, a vestibulum nunc magna at sem. Sed in risus ac felis varius blandit.
-
-      - name: Professor Jane Smith
-        icon: fa-solid fa-thumbtack
-        reference: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam condimentum, diam quis convallis euismod, arcu mi ullamcorper lorem, a vestibulum nunc magna at sem. Sed in risus ac felis varius blandit.
+        summary: "OPIc Intermediate High; Advanced writing & reading"

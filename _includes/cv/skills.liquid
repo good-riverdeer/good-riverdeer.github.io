@@ -1,0 +1,39 @@
+{% comment %}
+  Local override of al_folio_cv's templates/cv/skills.liquid.
+  Why: current RenderCV (Python) rejects extra list-valued fields on entries
+  (crashes its placeholder substitution), so a `keywords` array can't be added
+  to _data/cv.yml without breaking the PDF. Falls back to `entry.summary`
+  (a plain string, already required for the RenderCV PDF) when `entry.keywords`
+  is absent, so skills content still renders on the website.
+{% endcomment %}
+
+<div class="card-text font-weight-light">
+  {% for entry in entries %}
+    <div class="skill-item">
+      {% if entry.icon %}
+        <i class="{{ entry.icon }}"></i>
+      {% endif %}
+      <strong>
+        {{- entry.name -}}
+        {%- if entry.level %} ({{ entry.level }}){% endif %}:</strong
+      >
+      {% if entry.keywords %}
+        {% for keyword in entry.keywords %}
+          {% if forloop.last %}
+            {{ keyword }}
+          {% else %}
+            {{ keyword }},
+          {% endif %}
+        {% endfor %}
+      {% elsif entry.summary %}
+        {{ entry.summary }}
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+  .skill-item {
+    padding: 0.5rem 0;
+  }
+</style>
